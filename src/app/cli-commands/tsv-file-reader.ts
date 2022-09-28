@@ -38,9 +38,7 @@ export default class TSVFileReader implements FileReaderInterface {
       .filter((row) => row.trim() !== '')
       .map((line) => line.split('\t'))
       .map(
-        ([
-           title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, commentCount, coordinates
-         ]) => ({
+        ([title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, commentCount, coordinates]) => ({
           title,
           description,
           releaseDate: new Date(releaseDate),
@@ -76,15 +74,15 @@ export default class TSVFileReader implements FileReaderInterface {
       ) as unknown as FacilityType[] : [];
   }
 
-  getCountOfComment(c : string[]): number {
+  getCountOfComment(c: string[]): number {
     return c ? c.length : 0;
   }
 
-  mapToCoordinates(c : string[]): Coordinates {
+  mapToCoordinates(c: string[]): Coordinates {
     return c ? {latitude: c[0], longitude: c[1]} : {} as Coordinates;
   }
 
-  mapToAuthor(a : string[]): User {
+  mapToAuthor(a: string[]): User {
     return a ? {
       name: a[0],
       email: a[1],
