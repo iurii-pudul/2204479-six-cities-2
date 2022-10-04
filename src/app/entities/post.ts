@@ -1,6 +1,6 @@
-import {User} from '../user/user.js';
+import {User} from './user.js';
 import {Coordinates} from './coordinates.js';
-import {CityType} from '../enums/city-type.js';
+import {City} from '../enums/city.js';
 import {HousingType} from '../enums/housing-type.js';
 import {FacilityType} from '../enums/facility-type.js';
 
@@ -11,7 +11,7 @@ export type Post = {
   // min 20 max 1024
   description: string;
   releaseDate: Date;
-  city: CityType;
+  city: City;
   // Ссылка на изображение, которое используется в качестве превью
   preview: string;
   // 6 штук

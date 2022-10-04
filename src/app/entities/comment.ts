@@ -1,4 +1,4 @@
-import {User} from '../user/user.js';
+import {User} from './user.js';
 
 export type Comment = {
   // min 5 max 1024

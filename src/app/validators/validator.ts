@@ -1,14 +1,14 @@
-import {User} from '../entities/user/user.js';
+import {User} from '../entities/user.js';
 import * as EmailValidator from 'email-validator';
 import * as Path from 'path';
-import {Post} from '../entities/post/post.js';
+import {Post} from '../entities/post.js';
 
 export class Validator {
 
   public static validateUser(user: User): string[] {
     const invalid: string[] = [];
     if (!user.name || user.name.length > 15) {
-      invalid.push('incorrect username field, must be 1-15 symbols');
+      invalid.push(`incorrect username field, must be 1-15 symbols ${user.name}`);
     }
     if (!user.email || !EmailValidator.validate(user.email)) {
       invalid.push('incorrect email');

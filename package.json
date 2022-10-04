@@ -14,7 +14,8 @@
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "ts": "ts-node"
+    "ts": "ts-node",
+    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123"
   },
   "devDependencies": {
     "@types/node": "^16.11.26",
@@ -33,6 +34,10 @@
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "email-validator": "^2.0.4"
+    "dayjs": "^1.11.5",
+    "email-validator": "^2.0.4",
+    "generate-password": "^1.7.0",
+    "got": "^12.0.3",
+    "json-server": "^0.17.0"
   }
 }

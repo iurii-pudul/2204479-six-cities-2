@@ -1,4 +1,4 @@
-import {Coordinates} from './post/coordinates.js';
+import {Coordinates} from './coordinates.js';
 
 export type City = {
   city: string;

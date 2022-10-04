@@ -1,0 +1,111 @@
+{
+  "api": {
+    "houseTypes": [
+      "apartment",
+      "house",
+      "room",
+      "hotel"
+    ],
+    "cities": [
+      "Paris",
+      "Cologne",
+      "Brussels",
+      "Amsterdam",
+      "Hamburg",
+      "Dusseldorf"
+    ],
+    "facilities": [
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge"
+    ],
+    "userTypes": [
+      "COMMON",
+      "PRO"
+    ],
+    "coordinates": [
+      {"city": "Paris", "latitude": 48.85661, "longitude": 2.351499},
+      {"city": "Cologne", "latitude": 50.938361, "longitude": 6.959974},
+      {"city": "Brussels", "latitude": 50.846557, "longitude": 4.351697},
+      {"city": "Amsterdam", "latitude": 52.370216, "longitude": 4.895168},
+      {"city": "Hamburg", "latitude": 53.550341, "longitude": 10.000654},
+      {"city": "Dusseldorf", "latitude": 51.225402, "longitude": 6.776314}
+    ],
+    "titles": [
+      "1 комнатная квартира",
+      "Дом красивый",
+      "3 звёздочный отель",
+      "2 комнатная квартира",
+      "Квартира 10 комнат",
+      "Просторные аппартаменты",
+      "Комната для студентов",
+      "Комната чистая",
+      "Дом у озера",
+      "Отель 4 звезды"
+    ],
+    "descriptions": [
+      "Дом закрытый, посторонних нет, везде камеры, в подъезде консьерж Могу прислать видео квартиры",
+      "Состояние хорошее. Мебелью и минимальной техникой укомплектована. На придомой территории имеется площадка для парковки личного транспорта"
+    ],
+    "previews": [
+      "book.jpg",
+      "institute-book.jpg",
+      "dark-tower.jpg",
+      "shining.jpg",
+      "draft.jpg",
+      "magic.jpg"
+    ],
+    "photos": [
+      "category-book.jpg",
+      "category-disk.jpg",
+      "category-home.jpg",
+      "category-games.jpg",
+      "category-entertainment.jpg",
+      "category-films.jpg"
+    ],
+    "users": [
+      "Иван Иванов",
+      "Олег Сидоров",
+      "Пьер Безухов",
+      "Роланд Дискейн",
+      "Холи Гибни",
+      "Джек Торренс",
+      "Юра Городецкий",
+      "Борис Гесер",
+      "Рокки Бальбоа",
+      "Джон Смит"
+    ],
+    "emails": [
+      "snow@pisem.local",
+      "president@dka.local",
+      "fish@big.local",
+      "test@pisem.local",
+      "freedom@pisem.local",
+      "rolan@pochta.local",
+      "author@mir.local",
+      "test@lost.loca",
+      "kujo-fan@story.local"
+    ],
+    "avatars": [
+      "user.jpg",
+      "photo.jpg",
+      "awesome-avatar.jpg",
+      "roland.jpg",
+      "smit.jpg",
+      "coffee.jpg"
+    ],
+    "comments": [
+      "comment 1",
+      "comment 2",
+      "comment 3",
+      "comment 4",
+      "comment 5",
+      "comment 6",
+      "comment 7"
+    ]
+  }
+}
