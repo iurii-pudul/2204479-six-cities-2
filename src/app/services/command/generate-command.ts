@@ -1,9 +1,10 @@
-import {CliCommandInterface} from './interfaces/cli-command.interface.js';
-import {MockData} from '../entities/MockData.js';
-import {PostGenerator} from './post-generator.js';
+import {CliCommandInterface} from '../interfaces/cli-command.interface.js';
+import {MockData} from '../../models/entities/MockData.js';
+import {PostGenerator} from '../post-generator.js';
 import chalk from 'chalk';
 import got from 'got';
-import {TSVFileWriter} from './tsv-file-writer.js';
+import {TSVFileWriter} from '../file/tsv-file-writer.js';
+import {getErrorMessage} from '../../utils/common.js';
 
 export default class GenerateCommand implements CliCommandInterface {
 
@@ -27,8 +28,8 @@ export default class GenerateCommand implements CliCommandInterface {
     try {
       this.initialData = await got.get(url).json();
       console.log(chalk.green(`POSTS HAVE BEEN GENERATED, COUNT OF POSTS ${offerCount}, initialData ${JSON.stringify(this.initialData)}`));
-    } catch {
-      return console.log(chalk.red(`CAN'T FETCH DATA FROM ${url}.`));
+    } catch (err) {
+      return console.log(chalk.red(`CAN'T FETCH DATA FROM ${url}. ${getErrorMessage(err)}`));
     }
 
     const offerGeneratorString = new PostGenerator(this.initialData);

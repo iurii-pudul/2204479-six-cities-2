@@ -1,4 +1,4 @@
-import {FileWriterInterface} from './interfaces/file-writer.interface.js';
+import {FileWriterInterface} from '../interfaces/file/file-writer.interface.js';
 import {createWriteStream, WriteStream} from 'fs';
 
 export class TSVFileWriter implements FileWriterInterface {

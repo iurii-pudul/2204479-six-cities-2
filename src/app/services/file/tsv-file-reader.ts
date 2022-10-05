@@ -1,4 +1,4 @@
-import {FileReaderInterface} from './interfaces/file-reader.interface.js';
+import {FileReaderInterface} from '../interfaces/file/file-reader.interface.js';
 import EventEmitter from 'events';
 import {createReadStream} from 'fs';
 

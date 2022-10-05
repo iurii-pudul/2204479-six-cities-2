@@ -1,4 +1,4 @@
-import {CliCommandInterface} from './interfaces/cli-command.interface.js';
+import {CliCommandInterface} from '../interfaces/cli-command.interface.js';
 
 
 export default class HelpCommand implements CliCommandInterface {

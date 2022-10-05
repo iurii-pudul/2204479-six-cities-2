@@ -1,13 +1,13 @@
-import {City} from '../enums/city.js';
-import {HousingType} from '../enums/housing-type.js';
-import {FacilityType} from '../enums/facility-type.js';
-import {Coordinates} from '../entities/coordinates.js';
-import {User} from '../entities/user.js';
-import {UserType} from '../enums/user-type.js';
-import {Post} from '../entities/post.js';
+import {City} from '../models/enums/city.js';
+import {HousingType} from '../models/enums/housing-type.js';
+import {FacilityType} from '../models/enums/facility-type.js';
+import {Coordinates} from '../models/entities/coordinates.js';
+import {User} from '../models/entities/user.js';
+import {UserType} from '../models/enums/user-type.js';
+import {Post} from '../models/entities/post.js';
 import chalk from 'chalk';
-import {Validator} from '../validators/validator.js';
-import {ErrorObject} from '../cli-commands/tsv-file-reader.js';
+import {PostValidator} from '../validators/post-validator.js';
+import {ErrorObject} from '../services/file/tsv-file-reader.js';
 
 let INDEX = 1;
 
@@ -42,7 +42,7 @@ export const createPost = (row: string) => {
 
   function validatePost(post: Post, index: number): ErrorObject[] {
     const result: ErrorObject[] = [];
-    const errors = Validator.validatePost(post);
+    const errors = new PostValidator(post).validate();
     if (errors.length !== 0) {
       result.push({postLine: index, postName: post.title, errors: errors});
     }

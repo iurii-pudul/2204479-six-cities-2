@@ -10,6 +10,7 @@
   "main": "main.js",
   "scripts": {
     "start": "npm run build && node ./dist/main.js",
+    "start:dev": "npm run ts ./src/main.ts | pino-pretty --colorize --translateTime SYS:standard",
     "build": "npm run clean && npm run compile",
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
@@ -18,9 +19,13 @@
     "mock:server": "json-server ./mocks/mock-server-data.json --port 3123"
   },
   "devDependencies": {
+    "@types/convict": "^6.1.1",
+    "@types/convict-format-with-validator": "^6.0.2",
     "@types/node": "^16.11.26",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
+    "convict": "^6.2.3",
+    "convict-format-with-validator": "^6.2.0",
     "eslint": "^8.12.0",
     "eslint-config-htmlacademy": "^5.1.2",
     "rimraf": "^3.0.2",
@@ -33,11 +38,18 @@
     "npm": "^8.1.0"
   },
   "dependencies": {
+    "@types/convict-format-with-validator": "^6.0.2",
     "chalk": "^4.1.2",
+    "convict": "^6.2.3",
     "dayjs": "^1.11.5",
+    "dotenv": "^16.0.3",
     "email-validator": "^2.0.4",
     "generate-password": "^1.7.0",
     "got": "^12.0.3",
-    "json-server": "^0.17.0"
+    "inversify": "^6.0.1",
+    "json-server": "^0.17.0",
+    "pino": "^8.6.1",
+    "pino-pretty": "^9.1.0",
+    "reflect-metadata": "^0.1.13"
   }
 }

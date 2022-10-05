@@ -1,9 +1,9 @@
-import {MockData} from '../entities/MockData.js';
-import {UserType} from '../enums/user-type.js';
+import {MockData} from '../models/entities/MockData.js';
+import {UserType} from '../models/enums/user-type.js';
 import dayjs from 'dayjs';
 import {PostGeneratorInterface} from './interfaces/post-generator.interface.js';
 import {generateRandomValue, getRandomItem, getRandomItems} from '../utils/random.js';
-import {Coordinates} from '../entities/coordinates.js';
+import {Coordinates} from '../models/entities/coordinates.js';
 import generator from 'generate-password';
 
 export class PostGenerator implements PostGeneratorInterface {
