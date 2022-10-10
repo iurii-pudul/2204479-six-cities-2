@@ -20,37 +20,52 @@ export class PostEntity extends defaultClasses.TimeStamps {
 
   @prop({required: true, trim: true, minlength: 10, maxlength: 100})
   public title!: string;
+
   @prop({required: true, trim: true, minlength: 20, maxlength: 1024})
   public description!: string;
+
   @prop({required: true})
   public releaseDate?: Date;
+
   @prop({required: true, enum: City})
   public city!: City;
+
   @prop({required: true})
   public preview!: string;
+
   @prop({required: true, type: [String]}) // как то валидировать на количество элементов в массиве
   public photos!: string[];
+
   @prop({required: true})
   public premium!: boolean;
+
   @prop({required: true})
   public favorite!: boolean;
+
   @prop({required: true, min: 1, max: 5})
   public rating!: number;
+
   @prop({required: true, enum: HousingType})
   public type!: HousingType;
+
   @prop({required: true, min: 1, max: 8})
   public roomCount!: number;
+
   @prop({required: true, min: 1, max: 10})
   public guestCount!: number;
+
   @prop({required: true, min: 100, max: 100000})
   public price!: number;
+
   @prop({required: true, type: [String], enum: FacilityType})
   public facilities!: FacilityType[];
+
   @prop({
     ref: UserEntity,
     required: true
   })
   public author!: Ref<UserEntity>;
+
   @prop({
     ref: CommentEntity,
     required: true,
@@ -58,6 +73,7 @@ export class PostEntity extends defaultClasses.TimeStamps {
     _id: false
   })
   public comments?: Ref<CommentEntity>[];
+
   @prop({required: true})
   public coordinates!: Coordinates;
 
