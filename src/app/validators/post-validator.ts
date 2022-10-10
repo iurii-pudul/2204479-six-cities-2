@@ -1,13 +1,21 @@
 import {UserValidator} from './user-validator.js';
 import {ValidatorInterface} from './interface/validator.interface.js';
-import {Post} from '../models/entities/post.js';
+import CreatePostDto from '../models/dto/user/create-post.dto.js';
 
 export class PostValidator implements ValidatorInterface {
 
-  constructor(private post: Post) {}
+  constructor(private post: CreatePostDto) {}
 
   public validate(): string[] {
     const invalid: string[] = new UserValidator(this.post.author).validate();
+    if (this.post.comments && this.post.comments.length > 0) {
+      this.post.comments.forEach((c) => {
+        if (c.length < 5 || c.length > 1024) {
+          console.log(this.post.comments);
+          invalid.push('incorrect length of comments, it has to be at least 5 chars or less than 1024');
+        }
+      });
+    }
     if (!this.post.title || this.post.title.length < 5 || this.post.title.length > 100) {
       invalid.push('incorrect length of title field, it has to be at least 5 chars or less than 100');
     }

@@ -12,3 +12,5 @@ coverage
 
 ./mocks/post-offers.tsv
 *.env
+/mongodb
+/upload/

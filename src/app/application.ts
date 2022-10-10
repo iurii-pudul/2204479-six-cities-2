@@ -8,7 +8,7 @@ export default class Application {
 
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
-    @inject(Component.ConfigInterface) private config: ConfigInterface
+    @inject(Component.ConfigInterface) private config: ConfigInterface,
   ) {}
 
   public async init() {

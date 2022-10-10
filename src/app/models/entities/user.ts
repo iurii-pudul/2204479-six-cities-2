@@ -6,7 +6,5 @@ export type User = {
   email: string;
   // Изображение пользователя в формате .jpg или .png
   photo: string;
-   // min 6 max 12
-  password: string;
   type: UserType;
 }

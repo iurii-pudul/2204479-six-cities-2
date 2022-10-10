@@ -18,9 +18,9 @@ export class UserValidator implements ValidatorInterface {
     if (!this.user.photo || !['.png', '.jpg'].includes(Path.parse(this.user.photo).ext)) {
       invalid.push('incorrect photo, image has to be jpg or png extension');
     }
-    if (!this.user.password || this.user.password.length < 6 || this.user.password.length > 12) {
-      invalid.push('incorrect password, it has to be at least 6 chars or less than 12');
-    }
+    // if (!this.user.password || this.user.password.length < 6 || this.user.password.length > 12) {
+    //   invalid.push('incorrect password, it has to be at least 6 chars or less than 12');
+    // }
     return invalid;
   }
 }

@@ -3,6 +3,7 @@ import {Coordinates} from './coordinates.js';
 import {City} from '../enums/city.js';
 import {HousingType} from '../enums/housing-type.js';
 import {FacilityType} from '../enums/facility-type.js';
+import {Comment} from './comment.js';
 
 export type Post = {
 
@@ -10,7 +11,7 @@ export type Post = {
   title: string;
   // min 20 max 1024
   description: string;
-  releaseDate: Date;
+  releaseDate?: Date;
   city: City;
   // Ссылка на изображение, которое используется в качестве превью
   preview: string;
@@ -32,5 +33,6 @@ export type Post = {
   facilities: FacilityType[];
   author: User;
   commentCount?: number;
+  comments?: Comment[];
   coordinates: Coordinates;
 }
