@@ -18,6 +18,15 @@ import {CommentServiceInterface} from './app/services/interfaces/comment-service
 import {PostServiceInterface} from './app/services/interfaces/post-service.interface.js';
 import {PostService} from './app/services/post.service.js';
 import {PostEntity, PostModel} from './app/models/entities/db/post.entity.js';
+import {FavoriteEntity, FavoriteModel} from './app/models/entities/db/favorite.entity.js';
+import {FavoriteServiceInterface} from './app/services/interfaces/favorite-service.interface.js';
+import {FavoriteService} from './app/services/favorite.service.js';
+import {CommentRatingsEntity, CommentRatingsModel} from './app/models/entities/db/comment-ratings.entity.js';
+import {PostRatingsEntity, PostRatingsModel} from './app/models/entities/db/post-ratings.entity.js';
+import {CommentRatingsServiceInterface} from './app/services/interfaces/comment-ratings-service.interface.js';
+import {CommentRatingsService} from './app/services/comment-ratings.service.js';
+import {PostRatingsServiceInterface} from './app/services/interfaces/post-ratings-service.interface.js';
+import {PostRatingsService} from './app/services/post-ratings.service.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -28,8 +37,14 @@ applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).
 applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 applicationContainer.bind<CommentServiceInterface>(Component.CommentServiceInterface).to(CommentService);
 applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
+applicationContainer.bind<types.ModelType<CommentRatingsEntity>>(Component.CommentRatingsModel).toConstantValue(CommentRatingsModel);
+applicationContainer.bind<CommentRatingsServiceInterface>(Component.CommentRatingsServiceInterface).to(CommentRatingsService);
+applicationContainer.bind<types.ModelType<PostRatingsEntity>>(Component.PostRatingsModel).toConstantValue(PostRatingsModel);
+applicationContainer.bind<PostRatingsServiceInterface>(Component.PostRatingsServiceInterface).to(PostRatingsService);
 applicationContainer.bind<PostServiceInterface>(Component.PostServiceInterface).to(PostService);
 applicationContainer.bind<types.ModelType<PostEntity>>(Component.PostModel).toConstantValue(PostModel);
+applicationContainer.bind<FavoriteServiceInterface>(Component.FavoriteServiceInterface).to(FavoriteService);
+applicationContainer.bind<types.ModelType<FavoriteEntity>>(Component.FavoriteModel).toConstantValue(FavoriteModel);
 
 
 const application = applicationContainer.get<Application>(Component.Application);

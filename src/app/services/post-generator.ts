@@ -28,7 +28,7 @@ export class PostGenerator implements PostGeneratorInterface {
       getRandomItem<string>(this.mockData.users),
       getRandomItem<string>(this.mockData.emails),
       getRandomItem<string>(this.mockData.avatars),
-      generator.generate({length: 10, numbers: true}),
+      generator.generate({length: 12, numbers: true}),
       getRandomItem([UserType.COMMON, UserType.PRO])
     ].join(';');
 

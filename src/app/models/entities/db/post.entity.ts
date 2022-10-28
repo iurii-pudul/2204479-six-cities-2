@@ -4,7 +4,6 @@ import {HousingType} from '../../enums/housing-type.js';
 import {FacilityType} from '../../enums/facility-type.js';
 import {Coordinates} from '../coordinates.js';
 import {UserEntity} from './user.entity.js';
-import {CommentEntity} from './comment.entity.js';
 
 const {prop, modelOptions} = typegoose;
 
@@ -42,9 +41,6 @@ export class PostEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public favorite!: boolean;
 
-  @prop({required: true, min: 1, max: 5})
-  public rating!: number;
-
   @prop({required: true, enum: HousingType})
   public type!: HousingType;
 
@@ -65,14 +61,6 @@ export class PostEntity extends defaultClasses.TimeStamps {
     required: true
   })
   public author!: Ref<UserEntity>;
-
-  @prop({
-    ref: CommentEntity,
-    required: true,
-    default: [],
-    _id: false
-  })
-  public comments?: Ref<CommentEntity>[];
 
   @prop({required: true})
   public coordinates!: Coordinates;

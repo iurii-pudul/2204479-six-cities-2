@@ -13,7 +13,7 @@ let INDEX = 1;
 export const createPost = (row: string) => {
   const defaultProfileImage = '/src/assets/empty_profile.png';
   const tokens = row.replace('\n', '').split('\t');
-  const [title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, comments, coordinates] = tokens;
+  const [title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, coordinates] = tokens;
 
   function getFacilities(s: string) : FacilityType[] {
     return s ? s.split(';').map((f) => (f)) as FacilityType[] : [];
@@ -26,10 +26,6 @@ export const createPost = (row: string) => {
       photo: a[2] ? a[2] : defaultProfileImage,
       type: Object.values(UserType).filter((t) => (t === a[4]))[0],
     } : {} as User;
-  }
-
-  function getComments(c: string[]): string[] {
-    return c.length > 0 ? c.filter((n) => n) : [];
   }
 
   function mapToCoordinates(c: string[]): Coordinates {
@@ -61,7 +57,6 @@ export const createPost = (row: string) => {
     price,
     facilities: getFacilities(facilities),
     author: mapToAuthor(author.split(';').map((a) => (a))),
-    comments: getComments(comments.split(';')),
     coordinates: mapToCoordinates(coordinates.split(';'))
   } as unknown as CreatePostDto;
 

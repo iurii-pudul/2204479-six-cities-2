@@ -4,17 +4,17 @@ import {PostEntity} from './post.entity.js';
 
 const {prop, modelOptions} = typegoose;
 
-export interface CommentEntity extends defaultClasses.Base {}
+export interface PostRatingsEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
-    collection: 'comments'
+    collection: 'post-ratings'
   }
 })
-export class CommentEntity extends defaultClasses.TimeStamps {
+export class PostRatingsEntity extends defaultClasses.TimeStamps {
 
-  @prop({required: true, trim: true, minlength: 5, maxlength: 1024})
-  public text!: string;
+  @prop({required: true, min: 1, max: 5})
+  public rating!: number;
 
   @prop({
     ref: PostEntity,
@@ -30,4 +30,4 @@ export class CommentEntity extends defaultClasses.TimeStamps {
 
 }
 
-export const CommentModel = getModelForClass(CommentEntity);
+export const PostRatingsModel = getModelForClass(PostRatingsEntity);

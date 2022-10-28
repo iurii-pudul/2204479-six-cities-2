@@ -6,6 +6,8 @@ import {inject, injectable} from 'inversify';
 import {Component} from '../types/component.js';
 import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
+import UpdateUserDto from '../models/dto/user/update-user.dto.js';
+import LoginUserDto from '../models/dto/user/login-user.dto.js';
 
 @injectable()
 export class UserService implements UserServiceInterface {
@@ -25,6 +27,12 @@ export class UserService implements UserServiceInterface {
     return result;
   }
 
+  public async updateById(userId: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, {new: true})
+      .exec();
+  }
+
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({email});
   }
@@ -41,5 +49,21 @@ export class UserService implements UserServiceInterface {
     }
 
     return this.create(dto, salt);
+  }
+
+  login(loginDTO: LoginUserDto): Promise<string | null> {
+    // has to return token
+    console.log(loginDTO);
+    return Promise.resolve(null);
+  }
+
+  // has to return token
+  isActive(userId: string): Promise<string | null> {
+    console.log(userId);
+    return Promise.resolve(null);
+  }
+
+  logout(): Promise<void> {
+    return Promise.resolve(undefined);
   }
 }

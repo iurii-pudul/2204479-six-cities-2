@@ -7,17 +7,13 @@ import ConsoleLoggerService from '../logger/console-logger.service.js';
 import {LoggerInterface} from '../interfaces/logger.interface.js';
 import {DatabaseInterface} from '../interfaces/database-client/database.interface.js';
 import {PostServiceInterface} from '../interfaces/post-service.interface.js';
-import {CommentServiceInterface} from '../interfaces/comment-service.interface.js';
 import {UserServiceInterface} from '../interfaces/user-service.interface.js';
 import {PostService} from '../post.service.js';
 import {UserService} from '../user.service.js';
-import {CommentService} from '../comment.service.js';
-import {CommentModel} from '../../models/entities/db/comment.entity.js';
 import {PostModel} from '../../models/entities/db/post.entity.js';
 import {UserModel} from '../../models/entities/db/user.entity.js';
 import DatabaseService from '../database-client/database.service.js';
 import generator from 'generate-password';
-import CreateCommentDto from '../../models/dto/user/create-comment.dto.js';
 import CreatePostDto from '../../models/dto/user/create-post.dto.js';
 
 const DEFAULT_DB_PORT = 27017;
@@ -26,7 +22,6 @@ export default class ImportCommand implements CliCommandInterface {
   public readonly name = '--import';
 
   private userService!: UserServiceInterface;
-  private commentService!: CommentServiceInterface;
   private postService!: PostServiceInterface;
   private databaseService!: DatabaseInterface;
   private logger: LoggerInterface;
@@ -38,7 +33,6 @@ export default class ImportCommand implements CliCommandInterface {
 
     this.logger = new ConsoleLoggerService();
     this.postService = new PostService(this.logger, PostModel);
-    this.commentService = new CommentService(this.logger, CommentModel);
     this.userService = new UserService(this.logger, UserModel);
     this.databaseService = new DatabaseService(this.logger);
   }
@@ -78,27 +72,13 @@ export default class ImportCommand implements CliCommandInterface {
 
   private async savePost(post: CreatePostDto) {
     console.log(post);
-    const comments = [];
     const user = await this.userService.findOrCreate({
       ...post.author,
-      password: post.author?.password ? post.author.password : generator.generate({ length: 10, numbers: true }),
+      password: post.author?.password ? post.author.password : generator.generate({ length: 12, numbers: true }),
     }, this.salt);
-
-    if (post.comments) {
-      for (const comment of post.comments) {
-        const createCommentDto = new CreateCommentDto();
-        createCommentDto.text = comment;
-        createCommentDto.author = user;
-        createCommentDto.rating = Math.floor(Math.random() * (5 - 1 + 1) + 1);
-        const createdComment = await this.commentService.create(createCommentDto);
-        comments.push(createdComment.id);
-      }
-      post.commentCount = comments.length;
-    }
 
     await this.postService.create({
       ...post,
-      comments,
       author: user.id,
     });
   }

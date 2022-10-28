@@ -7,6 +7,12 @@ export const Component = {
   UserModel: Symbol.for('UserModel'),
   CommentServiceInterface: Symbol.for('CommentServiceInterface'),
   CommentModel: Symbol.for('CommentModel'),
+  CommentRatingsModel: Symbol.for('CommentRatingsModel'),
+  CommentRatingsServiceInterface: Symbol.for('CommentRatingsServiceInterface'),
   PostServiceInterface: Symbol.for('PostServiceInterface'),
-  PostModel: Symbol.for('PostModel')
+  PostModel: Symbol.for('PostModel'),
+  PostRatingsModel: Symbol.for('PostRatingsModel'),
+  PostRatingsServiceInterface: Symbol.for('PostRatingsServiceInterface'),
+  FavoriteServiceInterface: Symbol.for('FavoriteServiceInterface'),
+  FavoriteModel: Symbol.for('FavoriteModel')
 } as const;

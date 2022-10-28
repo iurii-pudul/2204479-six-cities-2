@@ -7,20 +7,16 @@ import CreateUserDto from './create-user.dto.js';
 export default class CreatePostDto {
   public title!: string;
   public description!: string;
-  public releaseDate?: Date;
   public city!: City;
   public preview!: string;
   public photos!: string[];
   public premium!: boolean;
   public favorite!: boolean;
-  public rating!: number;
   public type!: HousingType;
   public roomCount!: number;
   public guestCount!: number;
   public price!: number;
   public facilities!: FacilityType[];
   public author!: CreateUserDto;
-  public commentCount?: number;
-  public comments?: string[];
   public coordinates!: Coordinates;
 }
