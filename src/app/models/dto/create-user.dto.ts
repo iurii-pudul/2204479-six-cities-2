@@ -1,4 +1,4 @@
-import {UserType} from '../../enums/user-type.js';
+import {UserType} from '../enums/user-type.js';
 
 export default class CreateUserDto {
   public name!: string;

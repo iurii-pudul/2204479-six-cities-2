@@ -1,13 +1,13 @@
 import {UserServiceInterface} from './interfaces/user-service.interface.js';
 import {UserEntity} from '../models/entities/db/user.entity.js';
 import {DocumentType, types} from '@typegoose/typegoose';
-import CreateUserDto from '../models/dto/user/create-user.dto.js';
+import CreateUserDto from '../models/dto/create-user.dto.js';
 import {inject, injectable} from 'inversify';
 import {Component} from '../types/component.js';
 import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
-import UpdateUserDto from '../models/dto/user/update-user.dto.js';
-import LoginUserDto from '../models/dto/user/login-user.dto.js';
+import UpdateUserDto from '../models/dto/update-user.dto.js';
+import LoginUserDto from '../models/dto/login-user.dto.js';
 
 @injectable()
 export class UserService implements UserServiceInterface {

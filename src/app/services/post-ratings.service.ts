@@ -5,7 +5,7 @@ import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
 import {PostRatingsServiceInterface} from './interfaces/post-ratings-service.interface.js';
 import {PostRatingsEntity} from '../models/entities/db/post-ratings.entity.js';
-import CreatePostRatingDto from '../models/dto/user/create-post-rating.dto.js';
+import CreatePostRatingDto from '../models/dto/create-post-rating.dto.js';
 import {ObjectId} from 'mongodb';
 
 @injectable()

@@ -1,6 +1,6 @@
 import {UserValidator} from './user-validator.js';
 import {ValidatorInterface} from './interface/validator.interface.js';
-import CreatePostDto from '../models/dto/user/create-post.dto.js';
+import CreatePostDto from '../models/dto/create-post.dto.js';
 
 // const MAX_POST_COMMENT_LENGTH = 1024;
 // const MIN_POST_COMMENT_LENGTH = 5;
@@ -31,14 +31,6 @@ export class PostValidator implements ValidatorInterface {
 
   public validate(): string[] {
     const invalid: string[] = new UserValidator(this.post.author).validate();
-    // if (this.post.comments && this.post.comments.length > 0) {
-    //   this.post.comments.forEach((c) => {
-    //     if (c.length < MIN_POST_COMMENT_LENGTH || c.length > MAX_POST_COMMENT_LENGTH) {
-    //       console.log(this.post.comments);
-    //       invalid.push(`incorrect length of comments, it has to be at least ${MIN_POST_COMMENT_LENGTH} chars or less than ${MAX_POST_COMMENT_LENGTH}`);
-    //     }
-    //   });
-    // }
     if (!this.post.title || this.post.title.length < MIN_POST_TITLE_LENGTH || this.post.title.length > MAX_POST_TITLE_LENGTH) {
       invalid.push(`incorrect length of title field, it has to be at least ${MIN_POST_TITLE_LENGTH} chars or less than ${MAX_POST_TITLE_LENGTH}`);
     }
@@ -57,12 +49,6 @@ export class PostValidator implements ValidatorInterface {
     if (!this.post.premium) {
       invalid.push('premium flag has to be filled');
     }
-    if (!this.post.favorite) {
-      invalid.push('favorite flag has to be filled');
-    }
-    // if (!this.post.rating || this.post.rating > MAX_POST_RATING || this.post.rating < MIN_POST_RATING) {
-    //   invalid.push(`rating has to be number from ${MIN_POST_RATING} to ${MAX_POST_RATING}`);
-    // }
     if (!this.post.type) {
       invalid.push('type has to be chosen from list of houseTypes');
     }

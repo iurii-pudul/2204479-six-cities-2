@@ -5,9 +5,11 @@ import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
 import {PostServiceInterface} from './interfaces/post-service.interface.js';
 import {PostEntity} from '../models/entities/db/post.entity.js';
-import CreatePostDto from '../models/dto/user/create-post.dto.js';
-import UpdatePostDto from '../models/dto/user/update-post.dto.js';
+import CreatePostDto from '../models/dto/create-post.dto.js';
+import UpdatePostDto from '../models/dto/update-post.dto.js';
 import {SortType} from '../models/enums/sort-type.enum.js';
+import {FavoriteEntity} from '../models/entities/db/favorite.entity.js';
+import {ObjectId} from 'mongodb';
 
 const LIMIT_OF_POSTS = 50;
 const LIMIT_OF_PREMIUM_POSTS = 3;
@@ -17,7 +19,8 @@ export class PostService implements PostServiceInterface {
 
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
-    @inject(Component.PostModel) private readonly postModel: types.ModelType<PostEntity>
+    @inject(Component.PostModel) private readonly postModel: types.ModelType<PostEntity>,
+    @inject(Component.FavoriteModel) private readonly favoriteModel: types.ModelType<FavoriteEntity>
   ) {}
 
   public async create(dto: CreatePostDto): Promise<DocumentType<PostEntity>> {
@@ -42,6 +45,7 @@ export class PostService implements PostServiceInterface {
       .exec();
   }
 
+  // todo add favorite field when authorized user will be in session
   public async find(): Promise<DocumentType<PostEntity>[]> {
     return this.postModel.aggregate([
       {
@@ -99,12 +103,9 @@ export class PostService implements PostServiceInterface {
   }
 
   public async findPremium(): Promise<DocumentType<PostEntity>[]> {
-    return this.postModel
-      .aggregate([
-        {$match: {premium: true}},
-        {$sort: {createdAt: SortType.Down}},
-        {$limit: LIMIT_OF_PREMIUM_POSTS},
-      ])
+    return this.postModel.find({premium: true})
+      .limit(LIMIT_OF_PREMIUM_POSTS)
+      .sort({createdAt: SortType.Down})
       .exec();
   }
 
@@ -114,20 +115,44 @@ export class PostService implements PostServiceInterface {
       .exec();
   }
 
-  public async findFavorite(): Promise<DocumentType<PostEntity>[]> {
+  public async findFavorite(userId: string): Promise<DocumentType<PostEntity>[]> {
     return this.postModel
       .aggregate([
-        {$match: {favorite: true}},
-        {$sort: {createdAt: SortType.Down}}
-      ])
-      .exec();
+        {
+          $lookup: {
+            from: 'favorites',
+            let: { postId: '$_id', userId: new ObjectId(userId)},
+            pipeline: [
+              { $match: {
+                $and: [
+                  { $expr: { $eq: ['$postId', '$$postId'] } },
+                  { $expr: { $eq: ['$userId', '$$userId'] } },
+                ]
+              } }
+            ],
+            as: 'favorites'
+          },
+        },
+        { $addFields:
+            {
+              id: { $toString: '$_id'},
+              favorite: { $gt: [ { $size: '$favorites' }, 0] }
+            }
+        },
+        { $unset: ['favorites'] },
+      ]);
   }
 
-  public async addToFavorites(postId: string): Promise<DocumentType<PostEntity> | null> {
-    return this.postModel.findByIdAndUpdate(postId, {favorite: true}, {new: true});
+  public async addToFavorites(userId: string, postId: string): Promise<void> {
+    const favoriteExists = await this.favoriteModel.find({postId: postId, userId: userId});
+    if (favoriteExists && favoriteExists.length > 0) {
+      throw Error('Post already added to favorites');
+    } else {
+      await this.favoriteModel.create({postId: postId, userId: userId});
+    }
   }
 
-  public async deleteFromFavorites(postId: string): Promise<DocumentType<PostEntity> | null> {
-    return this.postModel.findByIdAndUpdate(postId, {favorite: false}, {new: true});
+  public async deleteFromFavorites(userId: string, postId: string): Promise<void> {
+    await this.favoriteModel.deleteOne({postId: postId, userId: userId});
   }
 }

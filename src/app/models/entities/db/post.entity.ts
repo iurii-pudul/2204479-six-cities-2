@@ -38,9 +38,6 @@ export class PostEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public premium!: boolean;
 
-  @prop({required: true})
-  public favorite!: boolean;
-
   @prop({required: true, enum: HousingType})
   public type!: HousingType;
 

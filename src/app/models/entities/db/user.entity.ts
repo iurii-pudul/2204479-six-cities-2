@@ -1,7 +1,7 @@
 import {UserType} from '../../enums/user-type.js';
 import typegoose, {getModelForClass, defaultClasses} from '@typegoose/typegoose';
 import {createSHA256} from '../../../utils/common.js';
-import CreateUserDto from '../../dto/user/create-user.dto.js';
+import CreateUserDto from '../../dto/create-user.dto.js';
 
 const {prop, modelOptions} = typegoose;
 

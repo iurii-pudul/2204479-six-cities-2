@@ -5,7 +5,7 @@ import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
 import {CommentRatingsServiceInterface} from './interfaces/comment-ratings-service.interface.js';
 import {CommentRatingsEntity} from '../models/entities/db/comment-ratings.entity.js';
-import CreateCommentRatingDto from '../models/dto/user/create-comment-rating.dto.js';
+import CreateCommentRatingDto from '../models/dto/create-comment-rating.dto.js';
 import {ObjectId} from 'mongodb';
 
 @injectable()

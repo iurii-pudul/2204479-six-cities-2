@@ -5,8 +5,8 @@ import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
 import {CommentServiceInterface} from './interfaces/comment-service.interface.js';
 import {CommentEntity} from '../models/entities/db/comment.entity.js';
-import CreateCommentDto from '../models/dto/user/create-comment.dto.js';
-import UpdateCommentDto from '../models/dto/user/update-comment.dto.js';
+import CreateCommentDto from '../models/dto/create-comment.dto.js';
+import UpdateCommentDto from '../models/dto/update-comment.dto.js';
 import {SortType} from '../models/enums/sort-type.enum.js';
 
 @injectable()
@@ -84,7 +84,6 @@ export class CommentService implements CommentServiceInterface {
   public async findAllByPostId(postId: string): Promise<DocumentType<CommentEntity>[]> {
     return this.commentModel
       .find({post: postId})
-      .populate(['author', 'post'])
       .exec();
   }
 

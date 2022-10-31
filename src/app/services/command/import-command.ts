@@ -14,7 +14,7 @@ import {PostModel} from '../../models/entities/db/post.entity.js';
 import {UserModel} from '../../models/entities/db/user.entity.js';
 import DatabaseService from '../database-client/database.service.js';
 import generator from 'generate-password';
-import CreatePostDto from '../../models/dto/user/create-post.dto.js';
+import CreatePostDto from '../../models/dto/create-post.dto.js';
 
 const DEFAULT_DB_PORT = 27017;
 

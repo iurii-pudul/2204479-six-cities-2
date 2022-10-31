@@ -18,7 +18,7 @@ export class FavoriteEntity extends defaultClasses.TimeStamps {
     required: true,
     _id: false
   })
-  public postId!: Ref<PostEntity>[];
+  public postId!: Ref<PostEntity>;
 
   @prop({
     ref: UserEntity,

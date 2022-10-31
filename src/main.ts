@@ -27,25 +27,35 @@ import {CommentRatingsServiceInterface} from './app/services/interfaces/comment-
 import {CommentRatingsService} from './app/services/comment-ratings.service.js';
 import {PostRatingsServiceInterface} from './app/services/interfaces/post-ratings-service.interface.js';
 import {PostRatingsService} from './app/services/post-ratings.service.js';
+import {ControllerInterface} from './app/controllers/controller.interface.js';
+import ExceptionFilter from './app/errors/exception-filter.js';
+import {ExceptionFilterInterface} from './app/errors/exception-filter.interface.js';
+import UserController from './app/controllers/user.controller.js';
+import PostController from './app/controllers/post.controller.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
+// INTERFACES
 applicationContainer.bind<LoggerInterface>(Component.LoggerInterface).to(LoggerService).inSingletonScope();
 applicationContainer.bind<ConfigInterface>(Component.ConfigInterface).to(ConfigService).inSingletonScope();
 applicationContainer.bind<DatabaseInterface>(Component.DatabaseInterface).to(DatabaseService).inSingletonScope();
+applicationContainer.bind<ExceptionFilterInterface>(Component.ExceptionFilterInterface).to(ExceptionFilter).inSingletonScope();
 applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).to(UserService);
-applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 applicationContainer.bind<CommentServiceInterface>(Component.CommentServiceInterface).to(CommentService);
-applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
-applicationContainer.bind<types.ModelType<CommentRatingsEntity>>(Component.CommentRatingsModel).toConstantValue(CommentRatingsModel);
 applicationContainer.bind<CommentRatingsServiceInterface>(Component.CommentRatingsServiceInterface).to(CommentRatingsService);
-applicationContainer.bind<types.ModelType<PostRatingsEntity>>(Component.PostRatingsModel).toConstantValue(PostRatingsModel);
 applicationContainer.bind<PostRatingsServiceInterface>(Component.PostRatingsServiceInterface).to(PostRatingsService);
 applicationContainer.bind<PostServiceInterface>(Component.PostServiceInterface).to(PostService);
-applicationContainer.bind<types.ModelType<PostEntity>>(Component.PostModel).toConstantValue(PostModel);
 applicationContainer.bind<FavoriteServiceInterface>(Component.FavoriteServiceInterface).to(FavoriteService);
+// MODELS
+applicationContainer.bind<types.ModelType<PostEntity>>(Component.PostModel).toConstantValue(PostModel);
 applicationContainer.bind<types.ModelType<FavoriteEntity>>(Component.FavoriteModel).toConstantValue(FavoriteModel);
-
+applicationContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
+applicationContainer.bind<types.ModelType<CommentRatingsEntity>>(Component.CommentRatingsModel).toConstantValue(CommentRatingsModel);
+applicationContainer.bind<types.ModelType<PostRatingsEntity>>(Component.PostRatingsModel).toConstantValue(PostRatingsModel);
+applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
+// CONTROLLERS
+applicationContainer.bind<ControllerInterface>(Component.UserController).to(UserController).inSingletonScope();
+applicationContainer.bind<ControllerInterface>(Component.PostController).to(PostController).inSingletonScope();
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();

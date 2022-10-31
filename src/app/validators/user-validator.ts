@@ -1,7 +1,7 @@
 import * as EmailValidator from 'email-validator';
 import * as Path from 'path';
 import {ValidatorInterface} from './interface/validator.interface.js';
-import CreateUserDto from '../models/dto/user/create-user.dto.js';
+import CreateUserDto from '../models/dto/create-user.dto.js';
 
 const MAX_USER_NAME_LENGTH = 15;
 

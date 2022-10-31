@@ -1,6 +1,6 @@
 import {DocumentType} from '@typegoose/typegoose';
 import {CommentRatingsEntity} from '../../models/entities/db/comment-ratings.entity.js';
-import CreateCommentRatingDto from '../../models/dto/user/create-comment-rating.dto.js';
+import CreateCommentRatingDto from '../../models/dto/create-comment-rating.dto.js';
 
 
 export interface CommentRatingsServiceInterface {

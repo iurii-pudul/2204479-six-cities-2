@@ -6,7 +6,7 @@ import {FavoriteServiceInterface} from './interfaces/favorite-service.interface.
 import {FavoriteEntity} from '../models/entities/db/favorite.entity.js';
 import {SortType} from '../models/enums/sort-type.enum.js';
 import chalk from 'chalk';
-import CreateFavoriteDto from '../models/dto/user/create-favorite.dto.js';
+import CreateFavoriteDto from '../models/dto/create-favorite.dto.js';
 
 @injectable()
 export class FavoriteService implements FavoriteServiceInterface {

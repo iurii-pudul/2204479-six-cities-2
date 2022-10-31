@@ -6,7 +6,8 @@ import chalk from 'chalk';
 import {PostValidator} from '../validators/post-validator.js';
 import {ErrorObject} from '../services/file/tsv-file-reader.js';
 import * as crypto from 'crypto';
-import CreatePostDto from '../models/dto/user/create-post.dto.js';
+import CreatePostDto from '../models/dto/create-post.dto.js';
+import {ClassConstructor, plainToInstance} from 'class-transformer';
 
 let INDEX = 1;
 
@@ -76,3 +77,10 @@ export const createSHA256 = (line: string, salt: string): string => {
 };
 
 export const getErrorMessage = (error: unknown): string => error instanceof Error ? error.message : '';
+
+export const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
+  plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
+
+export const createErrorObject = (message: string) => ({
+  error: message,
+});
