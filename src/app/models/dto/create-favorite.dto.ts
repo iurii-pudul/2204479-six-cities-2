@@ -1,3 +1,5 @@
+import {IsMongoId} from 'class-validator';
+
 export default class CreateFavoriteDto {
 
 
@@ -6,6 +8,9 @@ export default class CreateFavoriteDto {
     this.postId = postId;
   }
 
+  @IsMongoId({message: 'Field userId is required and has to be mongoId'})
   public userId!: string;
+
+  @IsMongoId({message: 'Field postId is required and has to be mongoId'})
   public postId!: string;
 }

@@ -1,10 +1,12 @@
-import {Expose} from 'class-transformer';
+import {Expose, Type} from 'class-transformer';
 import {City} from '../../enums/city.js';
 import {HousingType} from '../../enums/housing-type.js';
 import {FacilityType} from '../../enums/facility-type.js';
 import {User} from '../../entities/user.js';
 import {Comment} from '../../entities/comment.js';
 import {Coordinates} from '../../entities/coordinates.js';
+import CommentResponse from './comment.response.js';
+import UserResponse from './user-response.js';
 
 export default class PostResponse {
   @Expose()
@@ -17,7 +19,7 @@ export default class PostResponse {
   public description!: string;
 
   @Expose()
-  public releaseDate!: Date;
+  public releaseDate!: string;
 
   @Expose()
   public city!: City;
@@ -53,12 +55,14 @@ export default class PostResponse {
   public facilities!: FacilityType[];
 
   @Expose()
+  @Type(() => UserResponse)
   public author!: User;
 
   @Expose()
   public commentCount!: number;
 
   @Expose()
+  @Type(() => CommentResponse)
   public comments!: Comment[];
 
   @Expose()

@@ -3,7 +3,7 @@ import {UserType} from '../../enums/user-type.js';
 
 export default class UserResponse {
   @Expose()
-  public name!: string ;
+  public name!: string;
 
   @Expose()
   public email!: string;

@@ -3,13 +3,9 @@ import {Coordinates} from '../models/entities/coordinates.js';
 import {User} from '../models/entities/user.js';
 import {UserType} from '../models/enums/user-type.js';
 import chalk from 'chalk';
-import {PostValidator} from '../validators/post-validator.js';
-import {ErrorObject} from '../services/file/tsv-file-reader.js';
 import * as crypto from 'crypto';
 import CreatePostDto from '../models/dto/create-post.dto.js';
 import {ClassConstructor, plainToInstance} from 'class-transformer';
-
-let INDEX = 1;
 
 export const createPost = (row: string) => {
   const defaultProfileImage = '/src/assets/empty_profile.png';
@@ -33,15 +29,6 @@ export const createPost = (row: string) => {
     return c ? {latitude: c[0], longitude: c[1]} : {} as Coordinates;
   }
 
-  function validatePost(post: CreatePostDto, index: number): ErrorObject[] {
-    const result: ErrorObject[] = [];
-    const errors = new PostValidator(post).validate();
-    if (errors.length !== 0) {
-      result.push({postLine: index, postName: post.title, errors: errors});
-    }
-    return result;
-  }
-
   const resultData = {
     title,
     description,
@@ -61,12 +48,6 @@ export const createPost = (row: string) => {
     coordinates: mapToCoordinates(coordinates.split(';'))
   } as unknown as CreatePostDto;
 
-  const errorObjects = validatePost(resultData, INDEX);
-  INDEX++;
-  if (errorObjects.length > 0) {
-    console.log(errorObjects);
-    throw Error(chalk.red('INVALID DATA'));
-  }
   console.log(chalk.green('PARSED DATA'));
   return resultData;
 };

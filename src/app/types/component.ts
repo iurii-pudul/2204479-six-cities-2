@@ -22,5 +22,6 @@ export const Component = {
   // CONTROLLERS
   UserController: Symbol.for('UserController'),
   PostController: Symbol.for('PostController'),
+  CommentController: Symbol.for('CommentController'),
 
 } as const;

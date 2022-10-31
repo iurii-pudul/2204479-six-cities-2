@@ -37,16 +37,16 @@ export class PostService implements PostServiceInterface {
       .exec();
   }
 
-  public async findAll(): Promise<DocumentType<PostEntity>[]> {
+  public async findAll(limit?: number): Promise<DocumentType<PostEntity>[]> {
     return this.postModel.find()
-      .limit(LIMIT_OF_POSTS)
+      .limit(limit ? limit : LIMIT_OF_POSTS)
       .sort({createdAt: SortType.Down})
       .populate(['author'])
       .exec();
   }
 
   // todo add favorite field when authorized user will be in session
-  public async find(): Promise<DocumentType<PostEntity>[]> {
+  public async find(limit?: number): Promise<DocumentType<PostEntity>[]> {
     return this.postModel.aggregate([
       {
         $lookup: {
@@ -78,7 +78,7 @@ export class PostService implements PostServiceInterface {
           }
       },
       { $unset: ['comments', 'ratings'] },
-      { $limit: LIMIT_OF_PREMIUM_POSTS },
+      { $limit: limit ? limit : LIMIT_OF_PREMIUM_POSTS },
       { $sort: { offerCount: SortType.Down }},
       {
         $lookup: {
@@ -96,6 +96,10 @@ export class PostService implements PostServiceInterface {
 
   public async findById(postId: string): Promise<DocumentType<PostEntity> | null> {
     return this.postModel.findById(postId).exec();
+  }
+
+  public async exists(postId: string): Promise<boolean> {
+    return (await this.postModel.exists({_id: postId})) !== null;
   }
 
   public async deleteById(postId: string): Promise<void> {

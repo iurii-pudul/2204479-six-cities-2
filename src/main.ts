@@ -32,6 +32,7 @@ import ExceptionFilter from './app/errors/exception-filter.js';
 import {ExceptionFilterInterface} from './app/errors/exception-filter.interface.js';
 import UserController from './app/controllers/user.controller.js';
 import PostController from './app/controllers/post.controller.js';
+import CommentController from './app/controllers/comment.controller.js';
 
 const applicationContainer = new Container();
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -56,6 +57,7 @@ applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toCo
 // CONTROLLERS
 applicationContainer.bind<ControllerInterface>(Component.UserController).to(UserController).inSingletonScope();
 applicationContainer.bind<ControllerInterface>(Component.PostController).to(PostController).inSingletonScope();
+applicationContainer.bind<ControllerInterface>(Component.CommentController).to(CommentController).inSingletonScope();
 
 const application = applicationContainer.get<Application>(Component.Application);
 await application.init();

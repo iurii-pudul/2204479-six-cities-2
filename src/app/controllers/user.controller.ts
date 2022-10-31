@@ -13,6 +13,14 @@ import {fillDTO} from '../utils/common.js';
 import UserResponse from '../models/dto/response/user-response.js';
 import LoginUserDto from '../models/dto/login-user.dto.js';
 import UpdateUserDto from '../models/dto/update-user.dto.js';
+import * as core from 'express-serve-static-core';
+import {ValidateObjectIdMiddleware} from '../services/middlewares/validate-objectid.middleware.js';
+import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto,middleware.js';
+import {DocumentExistsMiddleware} from '../services/middlewares/document-exists.middleware.js';
+
+type ParamsGetUser = {
+  userId: string;
+}
 
 @injectable()
 export default class UserController extends Controller {
@@ -24,10 +32,34 @@ export default class UserController extends Controller {
     super(logger);
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.create});
-    this.addRoute({path: '/:userId', method: HttpMethod.Put, handler: this.updateUser});
-    this.addRoute({path: '/:userId', method: HttpMethod.Get, handler: this.getUser});
-    this.addRoute({path: '/login', method: HttpMethod.Post, handler: this.login});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+    });
+    this.addRoute({
+      path: '/:userId',
+      method: HttpMethod.Patch,
+      handler: this.updateUser,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new ValidateDtoMiddleware(UpdateUserDto),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+      ]
+    });
+    this.addRoute({
+      path: '/:userId',
+      method: HttpMethod.Get,
+      handler: this.getUser,
+      middlewares: [new ValidateObjectIdMiddleware('userId')]
+    });
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
+    });
     this.addRoute({path: '/logout', method: HttpMethod.Post, handler: this.logout});
   }
 
@@ -50,8 +82,8 @@ export default class UserController extends Controller {
     );
   }
 
-  public async updateUser({body}: Request<Record<string, unknown>, Record<string, unknown>, UpdateUserDto>, res: Response): Promise<void> {
-    const result = await this.userService.updateById(body.id, body);
+  public async updateUser({body, params}: Request<core.ParamsDictionary | ParamsGetUser, Record<string, unknown>, UpdateUserDto>, res: Response): Promise<void> {
+    const result = await this.userService.updateById(params.userId, body);
     this.send(
       res,
       StatusCodes.CREATED,
@@ -59,9 +91,9 @@ export default class UserController extends Controller {
     );
   }
 
-  public async getUser(_req: Request, res: Response): Promise<void> {
-    console.log(_req.params);
-    const user = await this.userService.findById(_req.params.userId);
+  public async getUser({params}: Request<core.ParamsDictionary | ParamsGetUser>, res: Response): Promise<void> {
+    const {userId} = params;
+    const user = await this.userService.findById(userId);
     const userResponse = fillDTO(UserResponse, user);
     this.send(res, StatusCodes.OK, userResponse);
   }
