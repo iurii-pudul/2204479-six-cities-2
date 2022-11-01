@@ -31,6 +31,6 @@ export class FavoriteService implements FavoriteServiceInterface {
   }
 
   public async deleteFromFavorites(postId: string, userId: string): Promise<void> {
-    this.favoriteModel.findOneAndRemove({userId: userId, postId: postId});
+    await this.favoriteModel.findOneAndDelete({postId: postId, userId: userId}).exec();
   }
 }

@@ -14,6 +14,4 @@ export interface PostServiceInterface extends DocumentExistsInterface {
   findPremium(): Promise<DocumentType<PostEntity>[]>;
   incCommentCount(postId: string): Promise<DocumentType<PostEntity> | null>;
   findFavorite(userId: string): Promise<DocumentType<PostEntity>[]>;
-  addToFavorites(userId: string, postId: string): Promise<void>;
-  deleteFromFavorites(userId: string, postId: string): Promise<void>;
 }

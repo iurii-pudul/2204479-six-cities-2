@@ -11,7 +11,10 @@ import CreateCommentDto from '../models/dto/create-comment.dto.js';
 import CommentResponse from '../models/dto/response/comment.response.js';
 import {PostServiceInterface} from '../services/interfaces/post-service.interface.js';
 import HttpError from '../errors/http-error.js';
-import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto,middleware.js';
+import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middleware.js';
+import CreateCommentRatingDto from '../models/dto/create-comment-rating.dto.js';
+import {CommentRatingsServiceInterface} from '../services/interfaces/comment-ratings-service.interface.js';
+import CommentRatingResponse from '../models/dto/response/comment-rating.response.js';
 
 
 @injectable()
@@ -20,6 +23,7 @@ export default class CommentController extends Controller {
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
     @inject(Component.PostServiceInterface) private readonly postService: PostServiceInterface,
+    @inject(Component.CommentRatingsServiceInterface) private readonly commentRatingService: CommentRatingsServiceInterface,
   ) {
     super(logger);
     this.logger.info('Register routes for CommentController…');
@@ -30,16 +34,15 @@ export default class CommentController extends Controller {
       handler: this.create,
       middlewares: [new ValidateDtoMiddleware(CreateCommentDto)]
     });
+    this.addRoute({
+      path: '/rate',
+      method: HttpMethod.Post,
+      handler: this.rate,
+      middlewares: [new ValidateDtoMiddleware(CreateCommentRatingDto)]
+    });
   }
 
   public async create({body}: Request<Record<string, unknown>, Record<string, unknown>, CreateCommentDto>, res: Response): Promise<void> {
-    const result = await this.commentService.create(body);
-    this.send(
-      res,
-      StatusCodes.CREATED,
-      fillDTO(CommentResponse, result)
-    );
-
     if (!await this.postService.findById(body.post)) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
@@ -51,5 +54,10 @@ export default class CommentController extends Controller {
     const comment = await this.commentService.create(body);
     await this.postService.incCommentCount(body.post);
     this.created(res, fillDTO(CommentResponse, comment));
+  }
+
+  public async rate({body}: Request<Record<string, unknown>, Record<string, unknown>, CreateCommentRatingDto>, res: Response): Promise<void> {
+    const commentRating = await this.commentRatingService.create(body);
+    this.created(res, fillDTO(CommentRatingResponse, commentRating));
   }
 }

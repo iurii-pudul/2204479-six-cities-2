@@ -15,6 +15,16 @@ import {UserModel} from '../../models/entities/db/user.entity.js';
 import DatabaseService from '../database-client/database.service.js';
 import generator from 'generate-password';
 import CreatePostDto from '../../models/dto/create-post.dto.js';
+import {CommentService} from '../comment.service.js';
+import {CommentModel} from '../../models/entities/db/comment.entity.js';
+import {CommentServiceInterface} from '../interfaces/comment-service.interface.js';
+import {FavoriteModel} from '../../models/entities/db/favorite.entity.js';
+import {FavoriteServiceInterface} from '../interfaces/favorite-service.interface.js';
+import {FavoriteService} from '../favorite.service.js';
+import {PostRatingsServiceInterface} from '../interfaces/post-ratings-service.interface.js';
+import {PostRatingsService} from '../post-ratings.service.js';
+import {PostRatingsModel} from '../../models/entities/db/post-ratings.entity.js';
+import CreateCommentDto from '../../models/dto/create-comment.dto.js';
 
 const DEFAULT_DB_PORT = 27017;
 
@@ -23,6 +33,9 @@ export default class ImportCommand implements CliCommandInterface {
 
   private userService!: UserServiceInterface;
   private postService!: PostServiceInterface;
+  private commentService!: CommentServiceInterface;
+  private favoriteService!: FavoriteServiceInterface;
+  private postRatingService!: PostRatingsServiceInterface;
   private databaseService!: DatabaseInterface;
   private logger: LoggerInterface;
   private salt!: string;
@@ -34,6 +47,9 @@ export default class ImportCommand implements CliCommandInterface {
     this.logger = new ConsoleLoggerService();
     this.postService = new PostService(this.logger, PostModel);
     this.userService = new UserService(this.logger, UserModel);
+    this.favoriteService = new FavoriteService(this.logger, FavoriteModel);
+    this.commentService = new CommentService(this.logger, CommentModel);
+    this.postRatingService = new PostRatingsService(this.logger, PostRatingsModel);
     this.databaseService = new DatabaseService(this.logger);
   }
 
@@ -72,14 +88,52 @@ export default class ImportCommand implements CliCommandInterface {
 
   private async savePost(post: CreatePostDto) {
     console.log(post);
-    const user = await this.userService.findOrCreate({
+    const userEntity = await this.userService.findOrCreate({
+      // @ts-ignore
       ...post.author,
+      // @ts-ignore
       password: post.author?.password ? post.author.password : generator.generate({ length: 12, numbers: true }),
     }, this.salt);
 
-    await this.postService.create({
+    const postEntity = await this.postService.create({
       ...post,
-      author: user.id,
+      author: userEntity.id,
     });
+
+    // @ts-ignore
+    if (post.favorite) {
+      await this.favoriteService.addToFavorites({userId: userEntity.id, postId: postEntity.id});
+    }
+
+    // @ts-ignore
+    if (post.rating) {
+      // @ts-ignore
+      await this.postRatingService.create({rating: post.rating, author: userEntity.id, post: postEntity.id});
+    }
+
+    // @ts-ignore
+    if (post.comments && post.comments.length > 0) {
+      const comments: CreateCommentDto[] = [];
+      // @ts-ignore
+      post.comments.forEach((c: CreateCommentDto) => {
+        if (c.text) {
+          c.author = userEntity.id;
+          c.post = postEntity.id;
+          comments.push(c);
+        }
+      });
+      await this.createComments(comments);
+    }
+  }
+
+  private async createComments(comments: CreateCommentDto[]) {
+    for (const comment of comments) {
+      await this.createComment(comment);
+    }
+  }
+
+  private async createComment(c: CreateCommentDto) {
+    await this.commentService.create(c);
+    await this.postService.incCommentCount(c.post);
   }
 }

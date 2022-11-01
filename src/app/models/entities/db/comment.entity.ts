@@ -1,6 +1,7 @@
 import typegoose, {getModelForClass, defaultClasses, Ref} from '@typegoose/typegoose';
 import {UserEntity} from './user.entity.js';
 import {PostEntity} from './post.entity.js';
+import {COMMENT_TEXT_MAX, COMMENT_TEXT_MIN} from '../../dto/constants.js';
 
 const {prop, modelOptions} = typegoose;
 
@@ -13,7 +14,7 @@ export interface CommentEntity extends defaultClasses.Base {}
 })
 export class CommentEntity extends defaultClasses.TimeStamps {
 
-  @prop({required: true, trim: true, minlength: 5, maxlength: 1024})
+  @prop({required: true, trim: true, minlength: COMMENT_TEXT_MIN, maxlength: COMMENT_TEXT_MAX})
   public text!: string;
 
   @prop({

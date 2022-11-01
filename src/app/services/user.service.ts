@@ -55,19 +55,19 @@ export class UserService implements UserServiceInterface {
     return this.create(dto, salt);
   }
 
-  login(loginDTO: LoginUserDto): Promise<string | null> {
+  public async login(loginDTO: LoginUserDto): Promise<string | null> {
     // has to return token
     console.log(loginDTO);
     return Promise.resolve(null);
   }
 
   // has to return token
-  isActive(userId: string): Promise<string | null> {
+  public async isActive(userId: string): Promise<string | null> {
     console.log(userId);
     return Promise.resolve(null);
   }
 
-  logout(): Promise<void> {
+  public async logout(): Promise<void> {
     return Promise.resolve(undefined);
   }
 }

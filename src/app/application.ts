@@ -21,6 +21,7 @@ export default class Application {
     @inject(Component.UserController) private userController: ControllerInterface,
     @inject(Component.PostController) private postController: ControllerInterface,
     @inject(Component.CommentController) private commentController: ControllerInterface,
+    @inject(Component.FavoriteController) private favoriteController: ControllerInterface,
   ) {
     this.expressApp = express();
   }
@@ -29,10 +30,15 @@ export default class Application {
     this.expressApp.use('/users', this.userController.router);
     this.expressApp.use('/posts', this.postController.router);
     this.expressApp.use('/comments', this.commentController.router);
+    this.expressApp.use('/favorites', this.favoriteController.router);
   }
 
   public initMiddleware() {
     this.expressApp.use(express.json());
+    this.expressApp.use(
+      '/upload',
+      express.static(this.config.get('UPLOAD_DIRECTORY'))
+    );
   }
 
   public initExceptionFilters() {

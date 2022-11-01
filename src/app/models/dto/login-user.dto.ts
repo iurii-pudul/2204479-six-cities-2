@@ -1,4 +1,5 @@
 import {IsEmail, IsString, Length} from 'class-validator';
+import {PASSWORD_MAX, PASSWORD_MIN} from './constants.js';
 
 export default class LoginUserDto {
 
@@ -6,6 +7,6 @@ export default class LoginUserDto {
   public email!: string;
 
   @IsString({message: 'password is required'})
-  @Length(6, 12, {message: 'Min length for password is 6, max is 12'})
+  @Length(PASSWORD_MIN, PASSWORD_MAX, {message: `Min length for password is ${PASSWORD_MIN}, max is ${PASSWORD_MAX}`})
   public password!: string;
 }

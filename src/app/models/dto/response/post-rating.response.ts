@@ -1,13 +1,10 @@
 import {Expose, Type} from 'class-transformer';
-import PostResponse from './post-response.js';
 import UserResponse from './user-response.js';
+import PostResponse from './post-response.js';
 
-export default class CommentResponse {
+export default class PostRatingResponse {
   @Expose()
-  public text!: string;
-
-  @Expose()
-  public rating!: number;
+  public rating!: string;
 
   @Expose()
   @Type(() => UserResponse)

@@ -2,6 +2,7 @@ import {UserType} from '../../enums/user-type.js';
 import typegoose, {getModelForClass, defaultClasses} from '@typegoose/typegoose';
 import {createSHA256} from '../../../utils/common.js';
 import CreateUserDto from '../../dto/create-user.dto.js';
+import {USER_NAME_MAX, USER_NAME_MIN} from '../../dto/constants.js';
 
 const {prop, modelOptions} = typegoose;
 
@@ -24,7 +25,7 @@ export class UserEntity extends defaultClasses.TimeStamps {
     this.type = data.type;
   }
 
-  @prop({required: true, default: ''})
+  @prop({required: true, default: '', minlength: USER_NAME_MIN, maxlength: USER_NAME_MAX})
   public name!: string;
 
   @prop({unique: true, required: true})

@@ -6,11 +6,12 @@ import chalk from 'chalk';
 import * as crypto from 'crypto';
 import CreatePostDto from '../models/dto/create-post.dto.js';
 import {ClassConstructor, plainToInstance} from 'class-transformer';
+import CreateCommentDto from '../models/dto/create-comment.dto.js';
 
 export const createPost = (row: string) => {
   const defaultProfileImage = '/src/assets/empty_profile.png';
   const tokens = row.replace('\n', '').split('\t');
-  const [title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, coordinates] = tokens;
+  const [title, description, releaseDate, city, preview, photos, premium, favorite, rating, type, roomCount, guestCount, price, facilities, author, comments, coordinates] = tokens;
 
   function getFacilities(s: string) : FacilityType[] {
     return s ? s.split(';').map((f) => (f)) as FacilityType[] : [];
@@ -29,6 +30,16 @@ export const createPost = (row: string) => {
     return c ? {latitude: c[0], longitude: c[1]} : {} as Coordinates;
   }
 
+  function mapToComments(com: string[]): CreateCommentDto[] {
+    const result: CreateCommentDto[] = [];
+    com.forEach((c) => {
+      const data = new CreateCommentDto();
+      data.text = c;
+      result.push(data);
+    });
+    return result;
+  }
+
   const resultData = {
     title,
     description,
@@ -45,6 +56,7 @@ export const createPost = (row: string) => {
     price,
     facilities: getFacilities(facilities),
     author: mapToAuthor(author.split(';').map((a) => (a))),
+    comments: mapToComments(comments.split(';').map((c) => (c))),
     coordinates: mapToCoordinates(coordinates.split(';'))
   } as unknown as CreatePostDto;
 

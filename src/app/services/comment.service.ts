@@ -8,6 +8,7 @@ import {CommentEntity} from '../models/entities/db/comment.entity.js';
 import CreateCommentDto from '../models/dto/create-comment.dto.js';
 import UpdateCommentDto from '../models/dto/update-comment.dto.js';
 import {SortType} from '../models/enums/sort-type.enum.js';
+import {ObjectId} from 'mongodb';
 
 @injectable()
 export class CommentService implements CommentServiceInterface {
@@ -83,8 +84,27 @@ export class CommentService implements CommentServiceInterface {
 
   public async findAllByPostId(postId: string): Promise<DocumentType<CommentEntity>[]> {
     return this.commentModel
-      .find({post: postId})
-      .exec();
+      .aggregate([
+        { $match: { $expr: { $eq: ['$post', new ObjectId(postId)] } }},
+        {
+          $lookup: {
+            from: 'comment-ratings',
+            let: { commentId: '$_id', postId: '$post'},
+            pipeline: [
+              { $match: { $expr: { $eq: ['$comment', '$$commentId'] } }},
+              { $project: {_id: '$_id', rating : '$rating'} }
+            ],
+            as: 'ratings'
+          },
+        },
+        { $addFields:
+            {
+              id: { $toString: '$_id'},
+              rating: { $ifNull: [{$avg : '$ratings.rating'}, 0] }
+            }
+        },
+        { $unset: ['ratings'] },
+      ]).exec();
   }
 
   public async deleteAllByPostId(postId: string): Promise<number | null> {

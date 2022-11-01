@@ -15,8 +15,9 @@ import LoginUserDto from '../models/dto/login-user.dto.js';
 import UpdateUserDto from '../models/dto/update-user.dto.js';
 import * as core from 'express-serve-static-core';
 import {ValidateObjectIdMiddleware} from '../services/middlewares/validate-objectid.middleware.js';
-import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto,middleware.js';
+import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middleware.js';
 import {DocumentExistsMiddleware} from '../services/middlewares/document-exists.middleware.js';
+import {UploadFileMiddleware} from '../services/middlewares/upload-file.middleware.js';
 
 type ParamsGetUser = {
   userId: string;
@@ -53,6 +54,15 @@ export default class UserController extends Controller {
       method: HttpMethod.Get,
       handler: this.getUser,
       middlewares: [new ValidateObjectIdMiddleware('userId')]
+    });
+    this.addRoute({
+      path: '/:userId/photo',
+      method: HttpMethod.Post,
+      handler: this.uploadPhoto,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'photo'),
+      ]
     });
     this.addRoute({
       path: '/login',
@@ -96,6 +106,10 @@ export default class UserController extends Controller {
     const user = await this.userService.findById(userId);
     const userResponse = fillDTO(UserResponse, user);
     this.send(res, StatusCodes.OK, userResponse);
+  }
+
+  public async uploadPhoto(req: Request, res: Response) {
+    this.created(res, {filepath: req.file?.path});
   }
 
   public async login({body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>, _res: Response): Promise<void> {

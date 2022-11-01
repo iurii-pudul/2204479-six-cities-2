@@ -16,14 +16,14 @@ export class FavoriteEntity extends defaultClasses.TimeStamps {
   @prop({
     ref: PostEntity,
     required: true,
-    _id: false
+    _id: true
   })
   public postId!: Ref<PostEntity>;
 
   @prop({
     ref: UserEntity,
-    unique: true,
-    required: true
+    required: true,
+    _id: true
   })
   public userId!: Ref<UserEntity>;
 

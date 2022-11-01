@@ -1,6 +1,7 @@
 import typegoose, {getModelForClass, defaultClasses, Ref} from '@typegoose/typegoose';
 import {UserEntity} from './user.entity.js';
 import {PostEntity} from './post.entity.js';
+import {POST_RATING_MAX, POST_RATING_MIN} from '../../dto/constants.js';
 
 const {prop, modelOptions} = typegoose;
 
@@ -13,7 +14,7 @@ export interface PostRatingsEntity extends defaultClasses.Base {}
 })
 export class PostRatingsEntity extends defaultClasses.TimeStamps {
 
-  @prop({required: true, min: 1, max: 5})
+  @prop({required: true, min: POST_RATING_MIN, max: POST_RATING_MAX})
   public rating!: number;
 
   @prop({
