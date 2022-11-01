@@ -22,7 +22,7 @@ import {
   PREVIEW_MAX, PRICE_MAX, PRICE_MIN, ROOM_COUNT_MAX, ROOM_COUNT_MIN,
   TITLE_MAX,
   TITLE_MIN
-} from './constants.js';
+} from '../constants/constants.js';
 import CreateUserDto from './create-user.dto.js';
 import CreateCommentDto from './create-comment.dto.js';
 

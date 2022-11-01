@@ -1,7 +1,7 @@
 import typegoose, {getModelForClass, defaultClasses, Ref} from '@typegoose/typegoose';
 import {UserEntity} from './user.entity.js';
 import {CommentEntity} from './comment.entity.js';
-import {COMMENT_RATING_MAX, COMMENT_RATING_MIN} from '../../dto/constants.js';
+import {COMMENT_RATING_MAX, COMMENT_RATING_MIN} from '../../constants/constants.js';
 
 const {prop, modelOptions} = typegoose;
 

@@ -1,5 +1,5 @@
 import {IsString, MaxLength, MinLength} from 'class-validator';
-import {COMMENT_TEXT_MAX, COMMENT_TEXT_MIN} from './constants.js';
+import {COMMENT_TEXT_MAX, COMMENT_TEXT_MIN} from '../constants/constants.js';
 
 export default class UpdateCommentDto {
 

@@ -8,7 +8,7 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
-  IsInt, IsMongoId, IsObject, IsOptional, Max,
+  IsInt, IsObject, IsOptional, Max,
   MaxLength,
   Min,
   MinLength
@@ -21,7 +21,7 @@ import {
   ROOM_COUNT_MIN,
   TITLE_MAX,
   TITLE_MIN
-} from './constants.js';
+} from '../constants/constants.js';
 
 export default class UpdatePostDto {
 
@@ -78,10 +78,6 @@ export default class UpdatePostDto {
   @IsOptional()
   @ArrayUnique({message: 'type must contains values from this facilities: [Breakfast, Air conditioning, Laptop friendly workspace, Baby seat, Washer, Towels, Fridge] }'})
   public facilities?: FacilityType[];
-
-  @IsOptional()
-  @IsMongoId({message: 'userId field must be valid an id'})
-  public author?: string;
 
   @IsOptional()
   @IsObject({message: 'Field coordinates must be an object like {city?: Brussels, latitude!: 12.123, longitude!: 23.1233}'})

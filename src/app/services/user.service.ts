@@ -67,6 +67,20 @@ export class UserService implements UserServiceInterface {
     return Promise.resolve(null);
   }
 
+  public async verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null> {
+    const user = await this.findByEmail(dto.email);
+
+    if (! user) {
+      return null;
+    }
+
+    if (user.verifyPassword(dto.password, salt)) {
+      return user;
+    }
+
+    return null;
+  }
+
   public async logout(): Promise<void> {
     return Promise.resolve(undefined);
   }

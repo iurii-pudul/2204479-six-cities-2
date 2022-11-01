@@ -15,6 +15,7 @@ import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middle
 import CreateCommentRatingDto from '../models/dto/create-comment-rating.dto.js';
 import {CommentRatingsServiceInterface} from '../services/interfaces/comment-ratings-service.interface.js';
 import CommentRatingResponse from '../models/dto/response/comment-rating.response.js';
+import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
 
 
 @injectable()
@@ -32,17 +33,25 @@ export default class CommentController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateCommentDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCommentDto)
+      ]
     });
     this.addRoute({
       path: '/rate',
       method: HttpMethod.Post,
       handler: this.rate,
-      middlewares: [new ValidateDtoMiddleware(CreateCommentRatingDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCommentRatingDto)
+      ]
     });
   }
 
-  public async create({body}: Request<Record<string, unknown>, Record<string, unknown>, CreateCommentDto>, res: Response): Promise<void> {
+  public async create(req: Request<object, object, CreateCommentDto>, res: Response): Promise<void> {
+    const {body} = req;
+
     if (!await this.postService.findById(body.post)) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
@@ -51,7 +60,7 @@ export default class CommentController extends Controller {
       );
     }
 
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({...body, author: req.user.id});
     await this.postService.incCommentCount(body.post);
     this.created(res, fillDTO(CommentResponse, comment));
   }

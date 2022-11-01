@@ -1,5 +1,5 @@
 import {IsInt, IsMongoId, Max, Min} from 'class-validator';
-import {COMMENT_RATING_MAX, COMMENT_RATING_MIN} from './constants.js';
+import {COMMENT_RATING_MAX, COMMENT_RATING_MIN} from '../constants/constants.js';
 
 export default class CreateCommentRatingDto {
 

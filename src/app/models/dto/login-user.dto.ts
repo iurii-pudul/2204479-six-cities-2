@@ -1,5 +1,5 @@
 import {IsEmail, IsString, Length} from 'class-validator';
-import {PASSWORD_MAX, PASSWORD_MIN} from './constants.js';
+import {PASSWORD_MAX, PASSWORD_MIN} from '../constants/constants.js';
 
 export default class LoginUserDto {
 

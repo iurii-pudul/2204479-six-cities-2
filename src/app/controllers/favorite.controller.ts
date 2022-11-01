@@ -10,6 +10,7 @@ import {FavoriteServiceInterface} from '../services/interfaces/favorite-service.
 import FavoriteResponse from '../models/dto/response/favorite.response.js';
 import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middleware.js';
 import CreateFavoriteDto from '../models/dto/create-favorite.dto.js';
+import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
 
 
 @injectable()
@@ -25,13 +26,19 @@ export default class FavoriteController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.addToFavorites,
-      middlewares: [new ValidateDtoMiddleware(CreateFavoriteDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFavoriteDto)
+      ]
     });
     this.addRoute({
       path: '/',
       method: HttpMethod.Delete,
       handler: this.deleteFromFavorites,
-      middlewares: [new ValidateDtoMiddleware(CreateFavoriteDto)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateFavoriteDto)
+      ],
     });
   }
 

@@ -10,7 +10,7 @@ export interface PostServiceInterface extends DocumentExistsInterface {
   findById(postId: string): Promise<DocumentType<PostEntity> | null>;
   deleteById(postId: string): Promise<void>;
   findAll(limit?: number): Promise<DocumentType<PostEntity>[]>;
-  find(limit?: number): Promise<DocumentType<PostEntity>[]>;
+  find(limit?: number, userId?: string): Promise<DocumentType<PostEntity>[]>;
   findPremium(): Promise<DocumentType<PostEntity>[]>;
   incCommentCount(postId: string): Promise<DocumentType<PostEntity> | null>;
   findFavorite(userId: string): Promise<DocumentType<PostEntity>[]>;

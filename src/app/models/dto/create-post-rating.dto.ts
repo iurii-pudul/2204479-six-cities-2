@@ -1,5 +1,5 @@
 import {IsInt, IsMongoId, Max, Min} from 'class-validator';
-import {POST_RATING_MAX, POST_RATING_MIN} from './constants.js';
+import {POST_RATING_MAX, POST_RATING_MIN} from '../constants/constants.js';
 
 export default class CreatePostRatingDto {
 

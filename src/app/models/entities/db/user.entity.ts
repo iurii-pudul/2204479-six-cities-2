@@ -2,7 +2,7 @@ import {UserType} from '../../enums/user-type.js';
 import typegoose, {getModelForClass, defaultClasses} from '@typegoose/typegoose';
 import {createSHA256} from '../../../utils/common.js';
 import CreateUserDto from '../../dto/create-user.dto.js';
-import {USER_NAME_MAX, USER_NAME_MIN} from '../../dto/constants.js';
+import {USER_NAME_MAX, USER_NAME_MIN} from '../../constants/constants.js';
 
 const {prop, modelOptions} = typegoose;
 
@@ -42,6 +42,11 @@ export class UserEntity extends defaultClasses.TimeStamps {
 
   public setPassword(password: string, salt: string) {
     this.password = createSHA256(password, salt);
+  }
+
+  public verifyPassword(password: string, salt: string) {
+    const hashPassword = createSHA256(password, salt);
+    return hashPassword === this.password;
   }
 
   public getPassword() {

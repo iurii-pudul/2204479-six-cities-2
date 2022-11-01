@@ -19,7 +19,8 @@ export class PostService implements PostServiceInterface {
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
     @inject(Component.PostModel) private readonly postModel: types.ModelType<PostEntity>,
-  ) {}
+  ) {
+  }
 
   public async create(dto: CreatePostDto): Promise<DocumentType<PostEntity>> {
     dto.releaseDate = new Date().toDateString();
@@ -44,29 +45,47 @@ export class PostService implements PostServiceInterface {
       .exec();
   }
 
-  // todo add favorite field when authorized user will be in session
-  public async find(limit?: number): Promise<DocumentType<PostEntity>[]> {
+  public async find(limit?: number, userId?: string): Promise<DocumentType<PostEntity>[]> {
     return this.postModel.aggregate([
       {
         $lookup: {
           from: 'post-ratings',
-          let: { postId: '$_id'},
+          let: {postId: '$_id'},
           pipeline: [
-            { $match: { $expr: { $eq: ['$post', '$$postId'] } } },
-            { $project: {_id: '$_id', rating : '$rating'} }
+            {$match: {$expr: {$eq: ['$post', '$$postId']}}},
+            {$project: {_id: '$_id', rating: '$rating'}}
           ],
           as: 'ratings'
         },
       },
-      { $addFields:
+      {
+        $lookup: {
+          from: 'favorites',
+          let: {postId: '$_id'},
+          pipeline: [
+            {
+              $match: {
+                $and: [
+                  {$expr: {$eq: ['$postId', '$$postId']}},
+                  {$expr: {$eq: ['$userId', new ObjectId(userId)]}},
+                ]
+              }
+            }
+          ],
+          as: 'favorites'
+        },
+      },
+      {
+        $addFields:
           {
-            id: { $toString: '$_id'},
-            rating: { $ifNull: [{$avg : '$ratings.rating'}, 0] }
+            id: {$toString: '$_id'},
+            rating: {$ifNull: [{$avg: '$ratings.rating'}, 0]},
+            favorite: {$ne: [{$size: '$favorites'}, 0]}
           }
       },
-      { $unset: ['ratings'] },
-      { $limit: limit ? +limit : LIMIT_OF_POSTS },
-      { $sort: { offerCount: SortType.Down }},
+      {$unset: ['ratings', 'favorites']},
+      {$limit: limit ? +limit : LIMIT_OF_POSTS},
+      {$sort: {offerCount: SortType.Down}},
       {
         $lookup: {
           from: 'users',
@@ -112,25 +131,29 @@ export class PostService implements PostServiceInterface {
         {
           $lookup: {
             from: 'favorites',
-            let: { postId: '$_id', userId: new ObjectId(userId)},
+            let: {postId: '$_id'},
             pipeline: [
-              { $match: {
-                $and: [
-                  { $expr: { $eq: ['$postId', '$$postId'] } },
-                  { $expr: { $eq: ['$userId', '$$userId'] } },
-                ]
-              } }
+              {
+                $match: {
+                  $and: [
+                    {$expr: {$eq: ['$postId', '$$postId']}},
+                    {$expr: {$eq: ['$userId', new ObjectId(userId)]}},
+                  ]
+                }
+              }
             ],
             as: 'favorites'
           },
         },
-        { $addFields:
+        {
+          $addFields:
             {
-              id: { $toString: '$_id'},
-              favorite: { $gt: [ { $size: '$favorites' }, 0] }
+              id: {$toString: '$_id'},
+              favorite: {$ne: [{$size: '$favorites'}, 0]}
             }
         },
-        { $unset: ['favorites'] },
+        {$match: {$expr: {$ne: [{$size: '$favorites'}, 0]}}},
+        {$unset: ['favorites']},
       ]);
   }
 }

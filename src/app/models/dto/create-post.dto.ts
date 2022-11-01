@@ -8,7 +8,6 @@ import {
   IsArray, IsBoolean,
   IsEnum,
   IsInt,
-  IsMongoId,
   IsObject,
   Max,
   MaxLength,
@@ -23,7 +22,7 @@ import {
   PREVIEW_MAX, PRICE_MAX, PRICE_MIN, ROOM_COUNT_MAX, ROOM_COUNT_MIN,
   TITLE_MAX,
   TITLE_MIN
-} from './constants.js';
+} from '../constants/constants.js';
 
 export default class CreatePostDto {
   @MinLength(TITLE_MIN, {message: `Minimum title length must be ${TITLE_MIN}`})
@@ -69,7 +68,6 @@ export default class CreatePostDto {
   @ArrayUnique({message: 'type must contains values from this facilities: [Breakfast, Air conditioning, Laptop friendly workspace, Baby seat, Washer, Towels, Fridge] }'})
   public facilities!: FacilityType[];
 
-  @IsMongoId({message: 'userId field must be valid an id'})
   public author!: string;
 
   @IsObject({message: 'Field coordinates must be an object like {city?: Brussels, latitude!: 12.123, longitude!: 23.1233}'})

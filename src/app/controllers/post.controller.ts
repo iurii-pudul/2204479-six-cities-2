@@ -13,20 +13,16 @@ import PostResponse from '../models/dto/response/post-response.js';
 import {CommentServiceInterface} from '../services/interfaces/comment-service.interface.js';
 import CommentResponse from '../models/dto/response/comment.response.js';
 import * as core from 'express-serve-static-core';
-import {RequestQuery} from '../types/request-query.type.js';
 import {ValidateObjectIdMiddleware} from '../services/middlewares/validate-objectid.middleware.js';
 import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middleware.js';
 import {DocumentExistsMiddleware} from '../services/middlewares/document-exists.middleware.js';
 import CreatePostRatingDto from '../models/dto/create-post-rating.dto.js';
 import {PostRatingsServiceInterface} from '../services/interfaces/post-ratings-service.interface.js';
 import PostRatingResponse from '../models/dto/response/post-rating.response.js';
+import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
 
 type ParamsGetPost = {
   postId: string;
-}
-
-type ParamsGetUser = {
-  userId: string;
 }
 
 @injectable()
@@ -45,18 +41,35 @@ export default class PostController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreatePostDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreatePostDto)
+      ]
+    });
+    this.addRoute({
+      path: '/favorites',
+      method: HttpMethod.Get,
+      handler: this.getAllFavorites,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
     });
     this.addRoute({
       path: '/:postId',
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(UpdatePostDto),
         new DocumentExistsMiddleware(this.postService, 'Post', 'postId'),
       ]
     });
-    this.addRoute({path: '/premium', method: HttpMethod.Get, handler: this.getAllPremium});
+    this.addRoute({
+      path: '/premium',
+      method: HttpMethod.Get,
+      handler: this.getAllPremium,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
     this.addRoute({
       path: '/:postId',
       method: HttpMethod.Get,
@@ -70,15 +83,9 @@ export default class PostController extends Controller {
       path: '/:postId',
       method: HttpMethod.Delete,
       handler: this.deletePost,
-      middlewares: [new ValidateObjectIdMiddleware('postId')]
-    });
-    this.addRoute({
-      path: '/:postId/favorites/:userId',
-      method: HttpMethod.Get,
-      handler: this.getAllFavorites,
       middlewares: [
-        new ValidateObjectIdMiddleware('postId'),
-        new ValidateObjectIdMiddleware('userId')
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('postId')
       ]
     });
     this.addRoute({
@@ -94,12 +101,16 @@ export default class PostController extends Controller {
       path: '/rate',
       method: HttpMethod.Post,
       handler: this.rate,
-      middlewares: [new ValidateDtoMiddleware(CreatePostRatingDto)]
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreatePostRatingDto)
+      ]
     });
   }
 
-  public async create({body}: Request<Record<string, unknown>, Record<string, unknown>, CreatePostDto>, res: Response): Promise<void> {
-    const result = await this.postService.create(body);
+  public async create(req: Request<Record<string, unknown>, Record<string, unknown>, CreatePostDto>, res: Response): Promise<void> {
+    const {body, user} = req;
+    const result = await this.postService.create({...body, author: user.id});
     this.send(res, StatusCodes.CREATED, fillDTO(PostResponse, result));
   }
 
@@ -120,8 +131,9 @@ export default class PostController extends Controller {
     this.send(res, StatusCodes.OK, postResponse);
   }
 
-  public async getAllPosts({query}: Request<core.ParamsDictionary, unknown, unknown, RequestQuery>, res: Response): Promise<void> {
-    const postList = await this.postService.find(query.limit);
+  public async getAllPosts(req: Request, res: Response): Promise<void> {
+    const {params} = req;
+    const postList = await this.postService.find(+params.limit, req.user?.id);
     const postResponse = fillDTO(PostResponse, postList);
     this.send(res, StatusCodes.OK, postResponse);
   }
@@ -132,9 +144,8 @@ export default class PostController extends Controller {
     this.send(res, StatusCodes.OK, postResponse);
   }
 
-  public async getAllFavorites({params}: Request<core.ParamsDictionary | ParamsGetUser>, res: Response): Promise<void> {
-    const {userId} = params;
-    const postList = await this.postService.findFavorite(userId);
+  public async getAllFavorites(req: Request, res: Response): Promise<void> {
+    const postList = await this.postService.findFavorite(req.user.id);
     const postResponse = fillDTO(PostResponse, postList);
     this.send(res, StatusCodes.OK, postResponse);
   }

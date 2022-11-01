@@ -51,6 +51,14 @@ Content-Type: application/json
 
 ###
 
+## Проверка токена пользователя
+GET http://localhost:8000/users/is_auth HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inl1cml5cHVkdWxAZ21haWwuY29tIiwiaWQiOiI2MzYxNGEwZjMzODg3NjJlNGE0YjhlZTciLCJpYXQiOjE2NjczMjIzMDIsImV4cCI6MTY2NzQ5NTEwMn0.9BUECSxt1xAWapHg9JlXRrFC9xcKCN9VdxjqIO-jxsQ
+
+###
+
+###
+
 ## Отправка аватарки пользователю
 
 POST http://localhost:8000/users/635e397d7e2bd779a06ee4b3/photo HTTP/1.1
@@ -221,7 +229,7 @@ Content-Type: application/json
 
 ## Получить список избранных предложений для пользователя
 
-GET http://localhost:8000/:postId/favorites/:userId HTTP/1.1
+GET http://localhost:8000/posts/favorites HTTP/1.1
 Content-Type: application/json
 
 ###

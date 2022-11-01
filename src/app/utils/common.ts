@@ -4,6 +4,7 @@ import {User} from '../models/entities/user.js';
 import {UserType} from '../models/enums/user-type.js';
 import chalk from 'chalk';
 import * as crypto from 'crypto';
+import * as jose from 'jose';
 import {ClassConstructor, plainToInstance} from 'class-transformer';
 import CreateCommentDto from '../models/dto/create-comment.dto.js';
 import CreatePostImportDto from '../models/dto/create-post-import.dto.js';
@@ -77,3 +78,10 @@ export const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
 export const createErrorObject = (message: string) => ({
   error: message,
 });
+
+export const createJWT = async (algoritm: string, jwtSecret: string, payload: object): Promise<string> =>
+  new jose.SignJWT({...payload})
+    .setProtectedHeader({ alg: algoritm})
+    .setIssuedAt()
+    .setExpirationTime('2d')
+    .sign(crypto.createSecretKey(jwtSecret, 'utf-8'));

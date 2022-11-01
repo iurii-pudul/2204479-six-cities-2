@@ -1,6 +1,6 @@
 import {UserType} from '../enums/user-type.js';
 import {IsEmail, IsEnum, IsString, Length} from 'class-validator';
-import {PASSWORD_MAX, PASSWORD_MIN, USER_NAME_MAX, USER_NAME_MIN} from './constants.js';
+import {PASSWORD_MAX, PASSWORD_MIN, USER_NAME_MAX, USER_NAME_MIN} from '../constants/constants.js';
 
 export default class CreateUserDto {
 

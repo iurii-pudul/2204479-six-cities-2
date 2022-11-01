@@ -9,7 +9,7 @@ import {ConfigInterface} from '../services/interfaces/config.interface.js';
 import {UserServiceInterface} from '../services/interfaces/user-service.interface.js';
 import HttpError from '../errors/http-error.js';
 import {StatusCodes} from 'http-status-codes';
-import {fillDTO} from '../utils/common.js';
+import {createJWT, fillDTO} from '../utils/common.js';
 import UserResponse from '../models/dto/response/user-response.js';
 import LoginUserDto from '../models/dto/login-user.dto.js';
 import UpdateUserDto from '../models/dto/update-user.dto.js';
@@ -18,6 +18,9 @@ import {ValidateObjectIdMiddleware} from '../services/middlewares/validate-objec
 import {ValidateDtoMiddleware} from '../services/middlewares/validate-dto.middleware.js';
 import {DocumentExistsMiddleware} from '../services/middlewares/document-exists.middleware.js';
 import {UploadFileMiddleware} from '../services/middlewares/upload-file.middleware.js';
+import {JWT_ALGORITHM} from '../models/constants/user-constants.js';
+import LoggedUserResponse from '../models/dto/response/logged-user.response.js';
+import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
 
 type ParamsGetUser = {
   userId: string;
@@ -37,13 +40,21 @@ export default class UserController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+      middlewares: [
+        new ValidateDtoMiddleware(CreateUserDto)
+      ]
+    });
+    this.addRoute({
+      path: '/is_auth',
+      method: HttpMethod.Get,
+      handler: this.checkAuthenticate,
     });
     this.addRoute({
       path: '/:userId',
       method: HttpMethod.Patch,
       handler: this.updateUser,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('userId'),
         new ValidateDtoMiddleware(UpdateUserDto),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
@@ -60,6 +71,7 @@ export default class UserController extends Controller {
       method: HttpMethod.Post,
       handler: this.uploadPhoto,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'photo'),
       ]
@@ -70,7 +82,6 @@ export default class UserController extends Controller {
       handler: this.login,
       middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
     });
-    this.addRoute({path: '/logout', method: HttpMethod.Post, handler: this.logout});
   }
 
   public async create({body}: Request<Record<string, unknown>, Record<string, unknown>, CreateUserDto>, res: Response): Promise<void> {
@@ -112,30 +123,37 @@ export default class UserController extends Controller {
     this.created(res, {filepath: req.file?.path});
   }
 
-  public async login({body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>, _res: Response): Promise<void> {
-    console.log(body, _res);
-    const existsUser = await this.userService.findByEmail(body.email);
-    if (!existsUser) {
+  public async login({body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>, res: Response): Promise<void> {
+    const user = await this.userService.verifyUser(body, this.configService.get('SALT'));
+
+    if (!user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found.`,
-        'UserController',
+        'Unauthorized',
+        'UserController'
       );
     }
 
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
+    const token = await createJWT(
+      JWT_ALGORITHM,
+      this.configService.get('JWT_SECRET'),
+      { email: user.email, id: user.id}
     );
+
+    this.ok(res, fillDTO(LoggedUserResponse, {email: user.email, token}));
   }
 
-  public async logout({body}: Request<Record<string, unknown>, Record<string, unknown>, string>, _res: Response): Promise<void> {
-    console.log(body, _res);
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
-    );
+  public async checkAuthenticate(req: Request, res: Response): Promise<void> {
+    const user = await this.userService.findByEmail(req.user.email);
+
+    if (!user) {
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `User with email «${req.user.email}» not exists.`,
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(LoggedUserResponse, user));
   }
 }

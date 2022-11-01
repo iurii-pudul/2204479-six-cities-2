@@ -11,7 +11,7 @@ import {
   ROOM_COUNT_MIN,
   TITLE_MAX,
   TITLE_MIN
-} from '../../dto/constants.js';
+} from '../../constants/constants.js';
 
 const {prop, modelOptions} = typegoose;
 

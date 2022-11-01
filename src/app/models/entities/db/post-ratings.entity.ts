@@ -1,7 +1,7 @@
 import typegoose, {getModelForClass, defaultClasses, Ref} from '@typegoose/typegoose';
 import {UserEntity} from './user.entity.js';
 import {PostEntity} from './post.entity.js';
-import {POST_RATING_MAX, POST_RATING_MIN} from '../../dto/constants.js';
+import {POST_RATING_MAX, POST_RATING_MIN} from '../../constants/constants.js';
 
 const {prop, modelOptions} = typegoose;
 
