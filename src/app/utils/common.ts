@@ -4,9 +4,9 @@ import {User} from '../models/entities/user.js';
 import {UserType} from '../models/enums/user-type.js';
 import chalk from 'chalk';
 import * as crypto from 'crypto';
-import CreatePostDto from '../models/dto/create-post.dto.js';
 import {ClassConstructor, plainToInstance} from 'class-transformer';
 import CreateCommentDto from '../models/dto/create-comment.dto.js';
+import CreatePostImportDto from '../models/dto/create-post-import.dto.js';
 
 export const createPost = (row: string) => {
   const defaultProfileImage = '/src/assets/empty_profile.png';
@@ -58,7 +58,7 @@ export const createPost = (row: string) => {
     author: mapToAuthor(author.split(';').map((a) => (a))),
     comments: mapToComments(comments.split(';').map((c) => (c))),
     coordinates: mapToCoordinates(coordinates.split(';'))
-  } as unknown as CreatePostDto;
+  } as unknown as CreatePostImportDto;
 
   console.log(chalk.green('PARSED DATA'));
   return resultData;

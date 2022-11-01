@@ -113,6 +113,7 @@ export default class UserController extends Controller {
   }
 
   public async login({body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>, _res: Response): Promise<void> {
+    console.log(body, _res);
     const existsUser = await this.userService.findByEmail(body.email);
     if (!existsUser) {
       throw new HttpError(
@@ -130,7 +131,7 @@ export default class UserController extends Controller {
   }
 
   public async logout({body}: Request<Record<string, unknown>, Record<string, unknown>, string>, _res: Response): Promise<void> {
-    console.log(body);
+    console.log(body, _res);
     throw new HttpError(
       StatusCodes.NOT_IMPLEMENTED,
       'Not implemented',

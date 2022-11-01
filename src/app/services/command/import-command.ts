@@ -14,7 +14,6 @@ import {PostModel} from '../../models/entities/db/post.entity.js';
 import {UserModel} from '../../models/entities/db/user.entity.js';
 import DatabaseService from '../database-client/database.service.js';
 import generator from 'generate-password';
-import CreatePostDto from '../../models/dto/create-post.dto.js';
 import {CommentService} from '../comment.service.js';
 import {CommentModel} from '../../models/entities/db/comment.entity.js';
 import {CommentServiceInterface} from '../interfaces/comment-service.interface.js';
@@ -25,6 +24,7 @@ import {PostRatingsServiceInterface} from '../interfaces/post-ratings-service.in
 import {PostRatingsService} from '../post-ratings.service.js';
 import {PostRatingsModel} from '../../models/entities/db/post-ratings.entity.js';
 import CreateCommentDto from '../../models/dto/create-comment.dto.js';
+import CreatePostImportDto from '../../models/dto/create-post-import.dto.js';
 
 const DEFAULT_DB_PORT = 27017;
 
@@ -86,12 +86,10 @@ export default class ImportCommand implements CliCommandInterface {
     this.databaseService.disconnect();
   }
 
-  private async savePost(post: CreatePostDto) {
+  private async savePost(post: CreatePostImportDto) {
     console.log(post);
     const userEntity = await this.userService.findOrCreate({
-      // @ts-ignore
       ...post.author,
-      // @ts-ignore
       password: post.author?.password ? post.author.password : generator.generate({ length: 12, numbers: true }),
     }, this.salt);
 
@@ -100,21 +98,16 @@ export default class ImportCommand implements CliCommandInterface {
       author: userEntity.id,
     });
 
-    // @ts-ignore
     if (post.favorite) {
       await this.favoriteService.addToFavorites({userId: userEntity.id, postId: postEntity.id});
     }
 
-    // @ts-ignore
     if (post.rating) {
-      // @ts-ignore
       await this.postRatingService.create({rating: post.rating, author: userEntity.id, post: postEntity.id});
     }
 
-    // @ts-ignore
     if (post.comments && post.comments.length > 0) {
       const comments: CreateCommentDto[] = [];
-      // @ts-ignore
       post.comments.forEach((c: CreateCommentDto) => {
         if (c.text) {
           c.author = userEntity.id;

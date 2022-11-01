@@ -16,6 +16,7 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
   }
 
   private handleHttpError(error: HttpError, _req: Request, res: Response, _next: NextFunction) {
+    console.log(_next)
     this.logger.error(`[${error.detail}]: ${error.httpStatusCode} — ${error.message}`);
     res
       .status(error.httpStatusCode)
@@ -23,6 +24,7 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
   }
 
   private handleOtherError(error: Error, _req: Request, res: Response, _next: NextFunction) {
+    console.log(_next)
     this.logger.error(error.message);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
