@@ -6,7 +6,7 @@ import {Coordinates} from '../coordinates.js';
 import {UserEntity} from './user.entity.js';
 import {
   DESCRIPTION_MAX,
-  DESCRIPTION_MIN, GUEST_COUNT_MAX, GUEST_COUNT_MIN, PRICE_MAX, PRICE_MIN,
+  DESCRIPTION_MIN, GUEST_COUNT_MAX, GUEST_COUNT_MIN, PHOTOS_ARRAY_LENGTH, PRICE_MAX, PRICE_MIN,
   ROOM_COUNT_MAX,
   ROOM_COUNT_MIN,
   TITLE_MAX,
@@ -40,7 +40,7 @@ export class PostEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public preview!: string;
 
-  @prop({required: true, type: [String]}) // как то валидировать на количество элементов в массиве
+  @prop({required: true, type: [String], maxlength: PHOTOS_ARRAY_LENGTH, minlength: PHOTOS_ARRAY_LENGTH})
   public photos!: string[];
 
   @prop({required: true})

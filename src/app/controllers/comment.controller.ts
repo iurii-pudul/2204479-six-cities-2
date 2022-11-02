@@ -16,6 +16,7 @@ import CreateCommentRatingDto from '../models/dto/create-comment-rating.dto.js';
 import {CommentRatingsServiceInterface} from '../services/interfaces/comment-ratings-service.interface.js';
 import CommentRatingResponse from '../models/dto/response/comment-rating.response.js';
 import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
+import {ConfigInterface} from '../services/interfaces/config.interface.js';
 
 
 @injectable()
@@ -24,9 +25,10 @@ export default class CommentController extends Controller {
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
     @inject(Component.PostServiceInterface) private readonly postService: PostServiceInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
     @inject(Component.CommentRatingsServiceInterface) private readonly commentRatingService: CommentRatingsServiceInterface,
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for CommentController…');
 
     this.addRoute({

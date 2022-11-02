@@ -150,6 +150,22 @@ Content-Type: application/json
 
 ###
 
+## Загрузка изображения для картинки
+POST http://localhost:8000/posts/63611e495b0fbf5c3e0d3d7a/upload HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inl1cml5cHVkdWxAZ21haWwuY29tIiwiaWQiOiI2MzYxNGEwZjMzODg3NjJlNGE0YjhlZTciLCJpYXQiOjE2NjczMjc4MzgsImV4cCI6MTY2NzUwMDYzOH0.n6JbeyshqU_zM36uTMMhdIXubs7CQdqO3_u7283zayI
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="photos"; filename="default-photo.jpg"
+Content-Type: image/png
+
+< /Users/iuriipudul/work/htmlAcademy/nodejs-back/2204479-six-cities-2/static/default-photo.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+###
+
 ## Обновить предложение
 
 PATCH http://localhost:8000/posts HTTP/1.1

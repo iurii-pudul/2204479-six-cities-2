@@ -5,7 +5,6 @@ import {LoggerInterface} from '../services/interfaces/logger.interface.js';
 import {Controller} from './controller.js';
 import {HttpMethod} from '../models/enums/http-method.enum.js';
 import CreateUserDto from '../models/dto/create-user.dto.js';
-import {ConfigInterface} from '../services/interfaces/config.interface.js';
 import {UserServiceInterface} from '../services/interfaces/user-service.interface.js';
 import HttpError from '../errors/http-error.js';
 import {StatusCodes} from 'http-status-codes';
@@ -21,6 +20,8 @@ import {UploadFileMiddleware} from '../services/middlewares/upload-file.middlewa
 import {JWT_ALGORITHM} from '../models/constants/user-constants.js';
 import LoggedUserResponse from '../models/dto/response/logged-user.response.js';
 import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
+import {ConfigInterface} from '../services/interfaces/config.interface.js';
+import UploadUserPhotoResponse from '../models/dto/response/upload-user-photo.response.js';
 
 type ParamsGetUser = {
   userId: string;
@@ -31,9 +32,9 @@ export default class UserController extends Controller {
   constructor(
     @inject(Component.LoggerInterface) logger: LoggerInterface,
     @inject(Component.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(Component.ConfigInterface) private readonly configService: ConfigInterface,
+    @inject(Component.ConfigInterface) readonly configService: ConfigInterface,
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for UserController…');
 
     this.addRoute({
@@ -120,7 +121,10 @@ export default class UserController extends Controller {
   }
 
   public async uploadPhoto(req: Request, res: Response) {
-    this.created(res, {filepath: req.file?.path});
+    const {userId} = req.params;
+    const uploaFile = {photo: req.file?.filename};
+    await this.userService.updateById(userId, uploaFile);
+    this.created(res, fillDTO(UploadUserPhotoResponse, uploaFile));
   }
 
   public async login({body}: Request<Record<string, unknown>, Record<string, unknown>, LoginUserDto>, res: Response): Promise<void> {
@@ -140,7 +144,10 @@ export default class UserController extends Controller {
       { email: user.email, id: user.id}
     );
 
-    this.ok(res, fillDTO(LoggedUserResponse, {email: user.email, token}));
+    this.ok(res, {
+      ...fillDTO(LoggedUserResponse, user),
+      token
+    });
   }
 
   public async checkAuthenticate(req: Request, res: Response): Promise<void> {
@@ -148,8 +155,8 @@ export default class UserController extends Controller {
 
     if (!user) {
       throw new HttpError(
-        StatusCodes.CONFLICT,
-        `User with email «${req.user.email}» not exists.`,
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
         'UserController'
       );
     }

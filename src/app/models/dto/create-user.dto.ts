@@ -15,9 +15,6 @@ export default class CreateUserDto {
   @Length(PASSWORD_MIN, PASSWORD_MAX, {message: `Min length for password is ${PASSWORD_MIN}, max is ${PASSWORD_MAX}`})
   public password!: string;
 
-  @IsString({message: 'photo is required'})
-  public photo?: string;
-
   @IsEnum(UserType, {message: 'Field photo must be PRO or COMMON'})
   public type!: UserType;
 }

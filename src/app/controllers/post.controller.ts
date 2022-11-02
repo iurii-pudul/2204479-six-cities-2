@@ -20,6 +20,11 @@ import CreatePostRatingDto from '../models/dto/create-post-rating.dto.js';
 import {PostRatingsServiceInterface} from '../services/interfaces/post-ratings-service.interface.js';
 import PostRatingResponse from '../models/dto/response/post-rating.response.js';
 import {PrivateRouteMiddleware} from '../services/middlewares/private-route.middleware.js';
+import {ConfigInterface} from '../services/interfaces/config.interface.js';
+import UploadImageResponse from '../models/dto/response/upload-image.response.js';
+import {UploadFilesMiddleware} from '../services/middlewares/upload-files.middleware.js';
+import HttpError from '../errors/http-error.js';
+import {PHOTOS_ARRAY_LENGTH} from '../models/constants/constants.js';
 
 type ParamsGetPost = {
   postId: string;
@@ -32,8 +37,9 @@ export default class PostController extends Controller {
     @inject(Component.PostServiceInterface) private readonly postService: PostServiceInterface,
     @inject(Component.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
     @inject(Component.PostRatingsServiceInterface) private readonly postRatingService: PostRatingsServiceInterface,
+    @inject(Component.ConfigInterface) configService: ConfigInterface,
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for PostController…');
 
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.getAllPosts});
@@ -106,6 +112,16 @@ export default class PostController extends Controller {
         new ValidateDtoMiddleware(CreatePostRatingDto)
       ]
     });
+    this.addRoute({
+      path: '/:postId/upload',
+      method: HttpMethod.Post,
+      handler: this.uploadImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('postId'),
+        new UploadFilesMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'photos', 6),
+      ]
+    });
   }
 
   public async create(req: Request<Record<string, unknown>, Record<string, unknown>, CreatePostDto>, res: Response): Promise<void> {
@@ -160,5 +176,23 @@ export default class PostController extends Controller {
   public async rate({body}: Request<Record<string, unknown>, Record<string, unknown>, CreatePostRatingDto>, res: Response): Promise<void> {
     const result = await this.postRatingService.create(body);
     this.send(res, StatusCodes.CREATED, fillDTO(PostRatingResponse, result));
+  }
+
+  public async uploadImage(req: Request<core.ParamsDictionary | ParamsGetPost>, res: Response) {
+    const {postId} = req.params;
+    // @ts-ignore Не придумал как избежать подсвечивания линтом вобрку всех имён загруженных файлов
+    const filenames: string[] = req.files?.map((f) => f.filename);
+    const updateDto = { photos: filenames };
+
+    if (updateDto.photos.length !== 6) {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        `Count of photos has to be ${PHOTOS_ARRAY_LENGTH}`,
+        'PostController'
+      );
+    }
+
+    await this.postService.updateById(postId, updateDto);
+    this.created(res, fillDTO(UploadImageResponse, updateDto));
   }
 }

@@ -8,6 +8,11 @@ import * as jose from 'jose';
 import {ClassConstructor, plainToInstance} from 'class-transformer';
 import CreateCommentDto from '../models/dto/create-comment.dto.js';
 import CreatePostImportDto from '../models/dto/create-post-import.dto.js';
+import {ValidationError} from 'class-validator';
+import {ValidationErrorField} from '../types/validation-error-field.type.js';
+import {ServiceError} from '../models/enums/service-error.enum.js';
+import {DEFAULT_STATIC_IMAGES} from '../models/constants/application.constants.js';
+import {UnknownObject} from '../types/unknown-object.type.js';
 
 export const createPost = (row: string) => {
   const defaultProfileImage = '/src/assets/empty_profile.png';
@@ -75,8 +80,10 @@ export const getErrorMessage = (error: unknown): string => error instanceof Erro
 export const fillDTO = <T, V>(someDto: ClassConstructor<T>, plainObject: V) =>
   plainToInstance(someDto, plainObject, {excludeExtraneousValues: true});
 
-export const createErrorObject = (message: string) => ({
-  error: message,
+export const createErrorObject = (serviceError: ServiceError, message: string, details: ValidationErrorField[] = []) => ({
+  errorType: serviceError,
+  message,
+  details: [...details]
 });
 
 export const createJWT = async (algoritm: string, jwtSecret: string, payload: object): Promise<string> =>
@@ -85,3 +92,37 @@ export const createJWT = async (algoritm: string, jwtSecret: string, payload: ob
     .setIssuedAt()
     .setExpirationTime('2d')
     .sign(crypto.createSecretKey(jwtSecret, 'utf-8'));
+
+export const transformErrors = (errors: ValidationError[]): ValidationErrorField[] =>
+  errors.map(({property, value, constraints}) => ({
+    property,
+    value,
+    messages: constraints ? Object.values(constraints) : []
+  }));
+
+export const getFullServerPath = (host: string, port: number) => `http://${host}:${port}`;
+
+const isObject = (value: unknown) => typeof value === 'object' && value !== null;
+
+export const transformProperty = (
+  property: string,
+  someObject: UnknownObject,
+  transformFn: (object: UnknownObject) => void
+) => {
+  Object.keys(someObject)
+    .forEach((key) => {
+      if (key === property) {
+        transformFn(someObject);
+      } else if (isObject(someObject[key])) {
+        transformProperty(property, someObject[key] as UnknownObject, transformFn);
+      }
+    });
+};
+
+export const transformObject = (properties: string[], staticPath: string, uploadPath: string, data:UnknownObject) => {
+  properties
+    .forEach((property) => transformProperty(property, data, (target: UnknownObject) => {
+      const rootPath = DEFAULT_STATIC_IMAGES.includes(target[property] as string) ? staticPath : uploadPath;
+      target[property] = `${rootPath}/${target[property]}`;
+    }));
+};

@@ -3,6 +3,9 @@ import {UserType} from '../../enums/user-type.js';
 
 export default class UserResponse {
   @Expose()
+  public id!: string;
+
+  @Expose()
   public name!: string;
 
   @Expose()

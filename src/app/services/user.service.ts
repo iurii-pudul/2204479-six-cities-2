@@ -8,6 +8,7 @@ import {LoggerInterface} from './interfaces/logger.interface.js';
 import chalk from 'chalk';
 import UpdateUserDto from '../models/dto/update-user.dto.js';
 import LoginUserDto from '../models/dto/login-user.dto.js';
+import {DEFAULT_PHOTO_FILE_NAME} from '../models/constants/user-constants.js';
 
 @injectable()
 export class UserService implements UserServiceInterface {
@@ -18,7 +19,7 @@ export class UserService implements UserServiceInterface {
   ) {}
 
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity(dto);
+    const user = new UserEntity({...dto, photo: DEFAULT_PHOTO_FILE_NAME});
     user.setPassword(dto.password, salt);
 
     const result = await this.userModel.create(user);
