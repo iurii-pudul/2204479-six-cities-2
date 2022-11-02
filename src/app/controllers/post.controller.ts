@@ -180,9 +180,8 @@ export default class PostController extends Controller {
 
   public async uploadImage(req: Request<core.ParamsDictionary | ParamsGetPost>, res: Response) {
     const {postId} = req.params;
-    // @ts-ignore Не придумал как избежать подсвечивания линтом вобрку всех имён загруженных файлов
-    const filenames: string[] = req.files?.map((f) => f.filename);
-    const updateDto = { photos: filenames };
+    const filenames = req.files?.map((f) => f.filename);
+    const updateDto = { photos: filenames ? filenames : [] };
 
     if (updateDto.photos.length !== 6) {
       throw new HttpError(

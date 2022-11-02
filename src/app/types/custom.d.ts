@@ -4,5 +4,7 @@ declare namespace Express {
       id: string,
       email: string,
     }
+    // сомнительное решение)
+    files?: Multer.File[]
   }
 }

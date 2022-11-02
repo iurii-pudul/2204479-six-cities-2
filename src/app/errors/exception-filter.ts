@@ -44,6 +44,7 @@ export default class ExceptionFilter implements ExceptionFilterInterface {
   }
 
   private handleValidationError(error: ValidationError, _req: Request, res: Response, _next: NextFunction) {
+    console.log(_next);
     this.logger.error(`[Validation Error]: ${error.message}`);
     error.details.forEach(
       (errorField) => this.logger.error(`[${errorField.property}] — ${errorField.messages}`)
