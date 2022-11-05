@@ -17,7 +17,7 @@ tags:
   - name: favorites
     description: Действия с избранными объявлениями.
 paths:
-# USERS
+# USERS SPEC
   /users/:
     post:
       tags:
@@ -186,7 +186,7 @@ paths:
               schema:
                 type: object
 
-# POSTS
+# POSTS SPEC
   /posts/:
     post:
       tags:
@@ -531,7 +531,7 @@ paths:
             example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjEyM2FzZGZhQGdtYWlsLmNvbSIsImlkIjoiNjM2MjQwM2Q4MzkyMWQ1ZTVmZGI3YWI1IiwiaWF0IjoxNjY3Mzg0MDU2LCJleHAiOjE2Njc1NTY4NTZ9.z9fAP9Ury1a1Z4v-khpPSju5hx9HNZpGfhJw6A5pRA8
           required: true
 
-# COMMENTS
+# COMMENTS SPEC
   /comments/:
     post:
       tags:
@@ -597,7 +597,7 @@ paths:
             example: Bearer token
           required: true
 
-# FAVORITES
+# FAVORITES SPEC
   /favorites:
     post:
       tags:
