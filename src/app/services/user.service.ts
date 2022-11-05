@@ -56,18 +56,6 @@ export class UserService implements UserServiceInterface {
     return this.create(dto, salt);
   }
 
-  public async login(loginDTO: LoginUserDto): Promise<string | null> {
-    // has to return token
-    console.log(loginDTO);
-    return Promise.resolve(null);
-  }
-
-  // has to return token
-  public async isActive(userId: string): Promise<string | null> {
-    console.log(userId);
-    return Promise.resolve(null);
-  }
-
   public async verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null> {
     const user = await this.findByEmail(dto.email);
 
@@ -80,9 +68,5 @@ export class UserService implements UserServiceInterface {
     }
 
     return null;
-  }
-
-  public async logout(): Promise<void> {
-    return Promise.resolve(undefined);
   }
 }

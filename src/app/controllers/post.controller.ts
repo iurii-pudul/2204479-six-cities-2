@@ -42,7 +42,11 @@ export default class PostController extends Controller {
     super(logger, configService);
     this.logger.info('Register routes for PostController…');
 
-    this.addRoute({path: '/', method: HttpMethod.Get, handler: this.getAllPosts});
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.getAllPosts
+    });
     this.addRoute({
       path: '/',
       method: HttpMethod.Post,

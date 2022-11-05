@@ -11,8 +11,5 @@ export interface UserServiceInterface extends DocumentExistsInterface {
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>
   findById(userId: string): Promise<DocumentType<UserEntity> | null>
   findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>>
-  login(loginDTO: LoginUserDto): Promise<string | null>
-  logout(): Promise<void>
-  isActive(userId: string): Promise<string | null>
   verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null>
 }

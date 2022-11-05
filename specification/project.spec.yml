@@ -1,0 +1,994 @@
+openapi: 3.0.2
+info:
+  title: API сервер для проекта «6 городов».
+  description: |-
+    * Список ресурсов и маршрутов сервера «6 городов».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.1
+tags:
+  - name: users
+    description: Действия с пользователеми.
+  - name: posts
+    description: Действия с объявлениями.
+  - name: comments
+    description: Действия с комментариями.
+  - name: favorites
+    description: Действия с избранными объявлениями.
+paths:
+# USERS
+  /users/:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+
+      responses:
+        "201":
+          description: Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/{postId}:
+    post:
+      tags:
+        - users
+      summary: Обновить данные пользователя пользователя
+      description: обновляет данные пользователя
+      requestBody:
+        description: Информация для обновления данных пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateUser'
+        required: true
+
+      responses:
+        "201":
+          description: Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким id не существует.
+
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Получить данные пользователя
+      description: Возвращает данные пользователя
+
+      responses:
+        "201":
+          description: Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователя с таким id не существует.
+
+  /users/is_auth:
+    get:
+      tags:
+        - users
+      summary: Получить авторизационные данные пользователя
+      description: Возвращает авторизационные данные пользователя
+
+      responses:
+        "201":
+          description: Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loggedUserResponse'
+
+        "409":
+          description: Пользователя с таким email не существует.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя.
+      description: Авторизует пользователя на основе логина и пароля.
+      requestBody:
+        description: Информация для авторизации.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginUser'
+        required: true
+
+      responses:
+        "200":
+          description: Пользователь авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loggedUserResponse'
+
+        "401":
+          description: Ошибка авторизации, проверьте введённые данные.
+
+    get:
+      tags:
+        - users
+      summary: Проверить статус авторизации пользователя.
+      description: Возвращает информацию о статусе авторизации пользователя.
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjU1MDMwZml2ZUBtYWlsLmNvbSIsImlkIjoiNjM2MDI2M2M1OWEzNjgxNDk3MzEyOTAwIiwiaWF0IjoxNjY3Mjk2NDI1LCJleHAiOjE2Njc0NjkyMjV9.E6r-n2O-YC88cb2klVQYqTuBI3znnmKCL5JdY_Wpt74
+
+      responses:
+        "200":
+          description: Пользователь авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "401":
+          description: Ошибка авторизации, проверьте введённые данные.
+
+  /users/{userId}/photo:
+    post:
+      tags:
+        - users
+      summary: Загрузить фото пользователя
+      description: Загружает фото пользователя, файл должен быть в формате `.png` или `.jpg`.
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: multipart/form-data; boundary=----WebKitFormBoundary_SOME_DATA
+
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: image/png
+
+        - in: header
+          name: Content-Disposition
+          schema:
+            type: string
+            example: form-data; name="photo"; filename="photo.png"
+
+      responses:
+        "201":
+          description: Фото загружено
+          content:
+            application/json:
+              schema:
+                type: object
+
+# POSTS
+  /posts/:
+    post:
+      tags:
+        - posts
+      summary: Создание объявления
+      description: Создаёт новое объявление
+      requestBody:
+        description: Информация для создания нового объявления
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPost'
+        required: true
+
+      responses:
+        "201":
+          description: Объявление успешно создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+
+        "400":
+          description: Не удаётся создать объявление
+
+        "401":
+          description: Пользователь не авторизован.
+
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+  /posts/{postId}:
+    post:
+      tags:
+        - posts
+      summary: Редактирование объявления
+      description: Обновляет объявление
+      requestBody:
+        description: Информация для обновления объявления
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatePost'
+        required: true
+
+      responses:
+        "200":
+          description: Объявление успешно обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+
+        "400":
+          description: Не удаётся обновить объявление
+
+        "401":
+          description: Пользователь не авторизован.
+
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+  /posts/{postId}:
+    delete:
+      tags:
+        - posts
+      summary: Удалить объявление
+      description: Удаляет объявление
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+      responses:
+        "200":
+          description: Объявление успешно удалено
+
+        "401":
+          description: Пользователь не авторизован.
+
+  /posts:
+    get:
+      tags:
+        - posts
+      summary: Получение списка объявлений
+      description: Возвращает список объявлений
+
+      responses:
+        "200":
+          description: Объявления успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
+
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 60
+          description: Не обязательный параметр, указывающий на количество объявлений.
+          required: false
+
+  /posts/{postId}:
+    get:
+      tags:
+        - posts
+      summary: Получить объявление
+      description: Возвращает объявление
+
+      responses:
+        "200":
+          description: Объявление успешно получено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+
+        "404":
+          description: Не удаётся получить объявление, объявление с указанным id отсутствует.
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: false
+
+  /posts/premium:
+    get:
+      tags:
+        - posts
+      summary: Получение списка премиальных объявление
+      description: Возвращает список премиальных объявления
+
+      responses:
+        "200":
+          description: Объявления успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
+
+      parameters:
+        - in: header
+          name: Accept
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjEyM2FzZGZhQGdtYWlsLmNvbSIsImlkIjoiNjM2MjQwM2Q4MzkyMWQ1ZTVmZGI3YWI1IiwiaWF0IjoxNjY3Mzg0MDU2LCJleHAiOjE2Njc1NTY4NTZ9.z9fAP9Ury1a1Z4v-khpPSju5hx9HNZpGfhJw6A5pRA8
+          required: false
+
+  /posts/rate:
+    post:
+      tags:
+        - posts
+      summary: оценить объявление
+      description: Оценивает объявление
+      requestBody:
+        description: Информация для оценивания объявления
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ratingPost'
+        required: true
+
+      responses:
+        "200":
+          description: Объявления успешно оценено
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ratingPost'
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: false
+
+  /posts/{postId}/upload:
+    post:
+      tags:
+        - posts
+      summary: Загрузить фото объявления 6 штук
+      description: Загружает фото объявления, файл должен быть список файлов 6 штук в формате `.png` или `.jpg`.
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: multipart/form-data; boundary=----WebKitFormBoundary_SOME_DATA
+
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: image/png
+
+        - in: header
+          name: Content-Disposition
+          schema:
+            type: string
+            example: form-data; name="photos"; filename="photo1.png,photo2.png,photo3.png,..."
+
+      responses:
+        "201":
+          description: Фото загружено
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /posts/favorites:
+    get:
+      tags:
+        - posts
+      summary: Получение списка избранных объявлений
+      description: Возвращает массив избранных объявлений
+
+      responses:
+        "200":
+          description: Объявления успешно получены.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/post'
+
+        "401":
+          description: Пользователь не авторизован
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+  /posts/{postId}/comments:
+    get:
+      tags:
+        - posts
+      summary: Получение списка комментариев
+      description: Возвращает список комментариев для объявления
+
+      responses:
+        "200":
+          description: Комментарии успешно получены.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/comment'
+
+        "408":
+          description: Не удалось получить комментарии
+
+        "404":
+          description: Объявление с указанным идентификатором не найден.
+
+    post:
+      tags:
+        - comments
+      summary: Добавление нового комментария
+      description: Добавляет новый комментарий для с идентификатором hotelId. Возвращает объект созданного комментария.
+      requestBody:
+        description: Информация для добавления комментария.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/сreateComment'
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий успешно создан.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/сomment'
+
+        "400":
+          description: Ошибка запроса.
+
+        "401":
+          description: Комментарий могут оставлять только авторизованные пользователи.
+
+      parameters:
+        - in: header
+          name: Content-Type
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjEyM2FzZGZhQGdtYWlsLmNvbSIsImlkIjoiNjM2MjQwM2Q4MzkyMWQ1ZTVmZGI3YWI1IiwiaWF0IjoxNjY3Mzg0MDU2LCJleHAiOjE2Njc1NTY4NTZ9.z9fAP9Ury1a1Z4v-khpPSju5hx9HNZpGfhJw6A5pRA8
+          required: true
+
+# COMMENTS
+  /comments/:
+    post:
+      tags:
+        - comments
+      summary: Создание комментария
+      description: Создаёт новый комментарий для объявления
+      requestBody:
+        description: Информация для создания нового комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+
+        "401":
+          description: Пользователь не авторизован
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+  /comments/rate:
+    post:
+      tags:
+        - comments
+      summary: Оценить комментарий
+      description: Оценивает комментарий
+      requestBody:
+        description: Информация для создания оценки комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ratingComment'
+        required: true
+
+      responses:
+        "201":
+          description: Комментарий успешно оценен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ratingComment'
+
+        "401":
+          description: Пользователь не авторизован
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+# FAVORITES
+  /favorites:
+    post:
+      tags:
+        - favorites
+      summary: добавление объявления в избранное
+      description: добавляет объявление в избранное
+      requestBody:
+        description: Информация для добавления объявление в избранное
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/favorite'
+        required: true
+
+      responses:
+        "201":
+          description: Успешно добавлено в избранное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/favorite'
+
+        "401":
+          description: Пользователь не авторизован
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+  /favorites:
+    delete:
+      tags:
+        - favorites
+      summary: удалить объявление из избранного
+      description: Удаляет объявление из избранного
+      requestBody:
+        description: Информация для удаления объявления из избранного
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/favorite'
+        required: true
+
+      responses:
+        "201":
+          description: Объявление успешно удалено из избранного
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/favorite'
+
+        "401":
+          description: Пользователь не авторизован
+
+      parameters:
+        - in: header
+          name: Autorization
+          schema:
+            type: string
+            example: Bearer token
+          required: true
+
+components:
+  schemas:
+    createUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Iurii Pudul
+        email:
+          type: string
+          example: lala@htmlacademy.ru
+        password:
+          type: string
+          example: qweqweqwe1
+        type:
+          type: boolean
+          example: COMMON
+    updateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Iurii Pudul
+        photo:
+          type: string
+          example: /path/to/photo.png
+        type:
+          type: boolean
+          example: PRO
+    loginUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: lala@htmlacademy.ru
+        password:
+          type: string
+          example: qweqweqwe1
+    loggedUserResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: token
+        email:
+          type: string
+          example: lala@htmlacademy.ru
+        photo:
+          type: string
+          example: /path/to/photo.png
+        name:
+          type: string
+          example: Iurii Pudul
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+          example: userId
+        name:
+          type: string
+          example: Iurii Pudul
+        email:
+          type: string
+          example: lalal@htmlacademy.re
+        photo:
+          type: string
+          example: /path/to/photo.png
+        type:
+          type: string
+          example: COMMON
+
+    post:
+      type: object
+      properties:
+        id:
+          type: number
+          example: userId
+        description:
+          type: string
+          example: post title
+        title:
+          type: string
+          example: post description
+        city:
+          type: string
+          example: Amsterdam
+        preview:
+          type: string
+          example: /path/to/preview.png
+        photos:
+          type: array
+          example: [ img/1.png, img/2.png, img/3.png, img/4.png, img/5.png, img/6.png ]
+        premium:
+          type: boolean
+          example: false
+        favorite:
+          type: boolean
+          example: true
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: apartment
+        roomCount:
+          type: number
+          example: 5
+        guestCount:
+          type: number
+          example: 5
+        price:
+          type: number
+          example: 1000
+        facilities:
+          type: array
+          example: [Washer, Breakfast, Air conditioning]
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: userId
+            name:
+              type: string
+              example: Iurii Pudul
+            photo:
+              type: string
+              example: /path/to/photo.png
+            type:
+              type: string
+              example: COMMON
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 52.35514938496378
+            longitude:
+              type: number
+              example: 4.673877537499948
+    createPost:
+      type: object
+      properties:
+        description:
+          type: string
+          example: post title
+        title:
+          type: string
+          example: post description
+        city:
+          type: string
+          example: Amsterdam
+        preview:
+          type: string
+          example: /path/to/preview.png
+        photos:
+          type: array
+          example: [ img/1.png, img/2.png, img/3.png, img/4.png, img/5.png, img/6.png ]
+        premium:
+          type: boolean
+          example: false
+        favorite:
+          type: boolean
+          example: true
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: apartment
+        roomCount:
+          type: number
+          example: 5
+        guestCount:
+          type: number
+          example: 5
+        price:
+          type: number
+          example: 1000
+        facilities:
+          type: array
+          example: [ Washer, Breakfast, Air conditioning ]
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: userId
+            name:
+              type: string
+              example: Iurii Pudul
+            photo:
+              type: string
+              example: /path/to/photo.png
+            type:
+              type: string
+              example: COMMON
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 52.35514938496378
+            longitude:
+              type: number
+              example: 4.673877537499948
+    updatePost:
+      type: object
+      properties:
+        description:
+          type: string
+          example: post title
+        title:
+          type: string
+          example: post description
+        city:
+          type: string
+          example: Amsterdam
+        preview:
+          type: string
+          example: /path/to/preview.png
+        photos:
+          type: array
+          example: [ img/1.png, img/2.png, img/3.png, img/4.png, img/5.png, img/6.png ]
+        premium:
+          type: boolean
+          example: false
+        favorite:
+          type: boolean
+          example: true
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: apartment
+        roomCount:
+          type: number
+          example: 5
+        guestCount:
+          type: number
+          example: 5
+        price:
+          type: number
+          example: 1000
+        facilities:
+          type: array
+          example: [ Washer, Breakfast, Air conditioning ]
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: userId
+            name:
+              type: string
+              example: Iurii Pudul
+            photo:
+              type: string
+              example: /path/to/photo.png
+            type:
+              type: string
+              example: COMMON
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 52.35514938496378
+            longitude:
+              type: number
+              example: 4.673877537499948
+    ratingPost:
+      type: object
+      properties:
+        rating:
+          type: number
+          example: 2.5
+        author:
+          type: string
+          example: userId
+        post:
+          type: string
+          example: postId
+
+    comment:
+      type: object
+      properties:
+        text:
+          type: string
+          example: comment
+        rating:
+          type: number
+          example: 2.3
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: userId
+        post:
+          type: object
+          properties:
+            id:
+              type: string
+              example: postId
+    ratingComment:
+      type: object
+      properties:
+        rating:
+          type: number
+          example: 2.5
+        author:
+          type: string
+          example: userId
+        comment:
+          type: string
+          example: postId
+
+    favorite:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: userId
+        postId:
+          type: string
+          example: postId
